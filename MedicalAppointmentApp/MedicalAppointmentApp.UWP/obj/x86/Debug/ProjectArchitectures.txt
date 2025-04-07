@@ -1,0 +1,1 @@
+F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\MedicalAppointmentApp.UWP.csproj;x86

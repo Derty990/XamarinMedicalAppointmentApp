@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:MedicalAppointmentApp.Views"
+       x:Class="MedicalAppointmentApp.AppShell"
+       FlyoutBehavior="Flyout"
+       Title="Medical Appointment System">
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="#3498db" />
+                <Setter Property="Shell.ForegroundColor" Value="White" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="#FFFFFF" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="#3498db" />
+                <Setter Property="Shell.TabBarUnselectedColor" Value="#95a5a6" />
+                <Setter Property="Shell.TabBarTitleColor" Value="#3498db" />
+            </Style>
+            <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <FlyoutItem Title="Dashboard" Icon="home.png" Route="dashboard">
+        <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Lekarze" Icon="doctor.png" Route="doctors">
+        <ShellContent ContentTemplate="{DataTemplate views:DoctorsPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Rezerwacja wizyty" Icon="calendar.png" Route="booking">
+        <ShellContent ContentTemplate="{DataTemplate views:AppointmentBookingPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Moje wizyty" Icon="appointment.png" Route="appointments">
+        <ShellContent ContentTemplate="{DataTemplate views:MyAppointmentsPage}" />
+    </FlyoutItem>
+    
+    <FlyoutItem Title="Profil" Icon="profile.png" Route="profile">
+        <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" />
+    </FlyoutItem>
+
+</Shell>

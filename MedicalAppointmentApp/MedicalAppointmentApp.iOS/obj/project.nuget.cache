@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "HK0BMvzgXu8=",
+  "success": true,
+  "projectFilePath": "F:\\XamarinCourse\\MedicalAppointmentApp\\MedicalAppointmentApp\\MedicalAppointmentApp.iOS\\MedicalAppointmentApp.iOS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Bartek\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Users\\Bartek\\.nuget\\packages\\xamarin.essentials\\1.7.0\\xamarin.essentials.1.7.0.nupkg.sha512",
+    "C:\\Users\\Bartek\\.nuget\\packages\\xamarin.forms\\5.0.0.2196\\xamarin.forms.5.0.0.2196.nupkg.sha512"
+  ],
+  "logs": []
+}

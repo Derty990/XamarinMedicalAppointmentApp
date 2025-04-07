@@ -21,7 +21,7 @@
                         <Frame CornerRadius="75" HeightRequest="150" WidthRequest="150"
                                IsClippedToBounds="True" Padding="0" BorderColor="White"
                                HorizontalOptions="Center" VerticalOptions="Center">
-                            <Image Source="doctor_placeholder.png" Aspect="AspectFill" />
+                            
                         </Frame>
                     </StackLayout>
                     

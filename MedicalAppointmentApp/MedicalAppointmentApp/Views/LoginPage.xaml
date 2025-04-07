@@ -4,7 +4,7 @@
              x:Class="MedicalAppointmentApp.Views.LoginPage"
              BackgroundColor="#f5f5f5">
     <StackLayout Padding="30" Spacing="20" VerticalOptions="Center">
-        <Image Source="logo.png" HeightRequest="120" HorizontalOptions="Center" />
+        
 
         <Label Text="Medical Appointment System" 
                FontSize="24" 

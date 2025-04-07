@@ -1,7 +1,6 @@
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\MedicalAppointmentApp.csproj.AssemblyReference.cache
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\MedicalAppointmentApp.GeneratedMSBuildEditorConfig.editorconfig
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\App.xaml.g.cs
-F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\AppShell.xaml.g.cs
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\Views\AppointmentBookingPage.xaml.g.cs
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\Views\DashboardPage.xaml.g.cs
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\Views\DoctorDetailPage.xaml.g.cs
@@ -21,3 +20,6 @@ F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentA
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\bin\Debug\netstandard2.0\ref\MedicalAppointmentApp.dll
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\bin\Debug\netstandard2.0\MedicalAppointmentApp.pdb
 F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\XamlC.stamp
+F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\MedicalAppointmentApp.sourcelink.json
+F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\AppMainPage.xaml.g.cs
+F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\obj\Debug\netstandard2.0\MenuPage.xaml.g.cs

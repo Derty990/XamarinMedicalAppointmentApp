@@ -1,20 +1,41 @@
 ﻿using System;
 using Xamarin.Forms;
-
 namespace MedicalAppointmentApp.Views
 {
     public partial class DashboardPage : ContentPage
     {
         public DashboardPage()
         {
-            InitializeComponent();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing DashboardPage");
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("DashboardPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing DashboardPage: {ex}");
+            }
         }
 
         void OnFindDoctorClicked(object sender, EventArgs e)
         {
             try
             {
-                Shell.Current.GoToAsync("//doctors");
+                // Znajdź główny FlyoutPage (AppMainPage)
+                var flyoutPage = Application.Current.MainPage as FlyoutPage;
+                if (flyoutPage != null)
+                {
+                    // Nawiguj do DoctorsPage
+                    flyoutPage.Detail = new NavigationPage(new DoctorsPage())
+                    {
+                        BarBackgroundColor = Color.FromHex("#3498db"),
+                        BarTextColor = Color.White
+                    };
+
+                    // Zamknij menu wysuwane (jeśli było otwarte)
+                    flyoutPage.IsPresented = false;
+                }
             }
             catch (Exception ex)
             {
@@ -26,7 +47,16 @@ namespace MedicalAppointmentApp.Views
         {
             try
             {
-                Shell.Current.GoToAsync("//booking");
+                var flyoutPage = Application.Current.MainPage as FlyoutPage;
+                if (flyoutPage != null)
+                {
+                    flyoutPage.Detail = new NavigationPage(new AppointmentBookingPage())
+                    {
+                        BarBackgroundColor = Color.FromHex("#3498db"),
+                        BarTextColor = Color.White
+                    };
+                    flyoutPage.IsPresented = false;
+                }
             }
             catch (Exception ex)
             {
@@ -38,7 +68,16 @@ namespace MedicalAppointmentApp.Views
         {
             try
             {
-                Shell.Current.GoToAsync("//appointments");
+                var flyoutPage = Application.Current.MainPage as FlyoutPage;
+                if (flyoutPage != null)
+                {
+                    flyoutPage.Detail = new NavigationPage(new MyAppointmentsPage())
+                    {
+                        BarBackgroundColor = Color.FromHex("#3498db"),
+                        BarTextColor = Color.White
+                    };
+                    flyoutPage.IsPresented = false;
+                }
             }
             catch (Exception ex)
             {
@@ -50,7 +89,16 @@ namespace MedicalAppointmentApp.Views
         {
             try
             {
-                Shell.Current.GoToAsync("//profile");
+                var flyoutPage = Application.Current.MainPage as FlyoutPage;
+                if (flyoutPage != null)
+                {
+                    flyoutPage.Detail = new NavigationPage(new ProfilePage())
+                    {
+                        BarBackgroundColor = Color.FromHex("#3498db"),
+                        BarTextColor = Color.White
+                    };
+                    flyoutPage.IsPresented = false;
+                }
             }
             catch (Exception ex)
             {

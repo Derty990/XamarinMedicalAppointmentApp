@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MedicalAppointmentApp.MenuPage"
+             Title="Menu">
+    <StackLayout Padding="20" Spacing="15">
+        <Button Text="Dashboard" 
+                Clicked="OnDashboardClicked" />
+
+        <Button Text="Lekarze" 
+                Clicked="OnDoctorsClicked" />
+
+        <Button Text="Rezerwacja wizyty" 
+                Clicked="OnAppointmentBookingClicked" />
+
+        <Button Text="Moje wizyty" 
+                Clicked="OnMyAppointmentsClicked" />
+
+        <Button Text="Profil" 
+                Clicked="OnProfileClicked" />
+    </StackLayout>
+</ContentPage>

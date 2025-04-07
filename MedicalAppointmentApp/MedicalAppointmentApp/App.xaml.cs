@@ -11,7 +11,18 @@ namespace MedicalAppointmentApp
         {
             InitializeComponent();
 
-            MainPage = new LoginPage();
+            // Add this global exception handler
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            try
+            {
+                InitializeComponent();
+                MainPage = new LoginPage();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Exception in App constructor: {ex}");
+            }
 
             /*MainPage = new AppShell();
 
@@ -30,6 +41,13 @@ namespace MedicalAppointmentApp
             }*/
 
 
+        }
+
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = e.ExceptionObject as Exception;
+            System.Diagnostics.Debug.WriteLine($"UNHANDLED EXCEPTION: {ex?.Message}");
+            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex?.StackTrace}");
         }
 
         protected override void OnStart()

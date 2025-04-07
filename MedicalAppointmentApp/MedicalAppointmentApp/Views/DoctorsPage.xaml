@@ -62,7 +62,7 @@
                                        IsClippedToBounds="True" 
                                        Padding="0" 
                                        BackgroundColor="LightGray">
-                                    <Image Source="doctor_placeholder.png" Aspect="AspectFill" />
+                                    
                                 </Frame>
 
                                 <!-- Informacje o lekarzu -->

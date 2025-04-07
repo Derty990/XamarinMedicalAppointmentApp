@@ -7,10 +7,20 @@ namespace MedicalAppointmentApp.Views
     {
         public RegisterPage()
         {
-            InitializeComponent();
-            // Ustaw domyślne wartości
-            BirthdayPicker.MaximumDate = DateTime.Today.AddYears(-18);
-            GenderPicker.SelectedIndex = 0;
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing RegisterPage");
+                InitializeComponent();
+                // Ustaw domyślne wartości
+                BirthdayPicker.MaximumDate = DateTime.Today.AddYears(-18);
+                GenderPicker.SelectedIndex = 0;
+                System.Diagnostics.Debug.WriteLine("RegisterPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing RegisterPage: {ex}");
+            }
+            
         }
 
         void OnRegisterClicked(object sender, EventArgs e)

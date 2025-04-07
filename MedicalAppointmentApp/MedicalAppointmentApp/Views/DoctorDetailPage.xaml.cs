@@ -8,8 +8,19 @@ namespace MedicalAppointmentApp.Views
     {
         public DoctorDetailPage()
         {
-            InitializeComponent();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing DoctorDetailPage");
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("DoctorDetailPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing DoctorDetailPage: {ex}");
+            }
         }
+
+
 
         async void OnBookAppointmentClicked(object sender, EventArgs e)
         {

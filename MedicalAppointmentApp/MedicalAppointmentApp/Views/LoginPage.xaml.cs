@@ -7,7 +7,17 @@ namespace MedicalAppointmentApp.Views
     {
         public LoginPage()
         {
-            InitializeComponent();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing LoginPage");
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("LoginPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing LoginPage: {ex}");
+            }
+            
         }
 
         async void OnLoginClicked(object sender, EventArgs e)
@@ -23,12 +33,21 @@ namespace MedicalAppointmentApp.Views
                     return;
                 }
 
-                // Testowe hasło - tylko do celów demonstracyjnych
                 if (password == "test123")
                 {
-                    // Po udanym logowaniu przełączamy się na shell
-                    Application.Current.MainPage = new AppShell();
-                    await DisplayAlert("Zalogowano pomyślnie", "Zapraszamy", "OK");
+                    try
+                    {
+                        var mainPage = new AppMainPage();
+
+                        Application.Current.MainPage = mainPage;
+
+                        await DisplayAlert("Zalogowano pomyślnie", "Zapraszamy", "OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("Błąd", $"Nie udało się utworzyć interfejsu: {ex.Message}", "OK");
+                        System.Diagnostics.Debug.WriteLine($"Error: {ex}");
+                    }
                 }
                 else
                 {
@@ -38,7 +57,7 @@ namespace MedicalAppointmentApp.Views
             catch (Exception ex)
             {
                 await DisplayAlert("Błąd", $"Wystąpił błąd: {ex.Message}", "OK");
-                System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
+                System.Diagnostics.Debug.WriteLine($"Exception in login: {ex}");
             }
         }
 

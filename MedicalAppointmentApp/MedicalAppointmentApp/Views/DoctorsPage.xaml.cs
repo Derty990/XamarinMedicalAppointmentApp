@@ -8,11 +8,14 @@ namespace MedicalAppointmentApp.Views
     {
         public DoctorsPage()
         {
-            InitializeComponent();
-
-            // Przykładowe dane - w przyszłości będą pobierane z bazy
-            var doctors = new[]
+            try
             {
+                System.Diagnostics.Debug.WriteLine("Initializing DoctorsPage");
+                InitializeComponent();
+
+                // Przykładowe dane - w przyszłości będą pobierane z bazy
+                var doctors = new[]
+                {
                 new { Name = "Dr Anna Kowalska", Specialization = "Kardiolog", Clinic = "Klinika Zdrowia", Rating = "⭐⭐⭐⭐⭐ (15 opinii)" },
                 new { Name = "Dr Jan Nowak", Specialization = "Okulista", Clinic = "Centrum Medyczne", Rating = "⭐⭐⭐⭐ (8 opinii)" },
                 new { Name = "Dr Piotr Wiśniewski", Specialization = "Neurolog", Clinic = "Klinika Zdrowia", Rating = "⭐⭐⭐⭐⭐ (23 opinie)" },
@@ -20,7 +23,14 @@ namespace MedicalAppointmentApp.Views
                 new { Name = "Dr Tomasz Lewandowski", Specialization = "Pediatra", Clinic = "Centrum Pediatryczne", Rating = "⭐⭐⭐⭐⭐ (31 opinii)" }
             };
 
-            DoctorsListView.ItemsSource = doctors;
+                DoctorsListView.ItemsSource = doctors;
+                System.Diagnostics.Debug.WriteLine("DoctorsPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing DoctorsPage: {ex}");
+            }
+            
         }
 
         async void OnDoctorSelected(object sender, SelectedItemChangedEventArgs e)

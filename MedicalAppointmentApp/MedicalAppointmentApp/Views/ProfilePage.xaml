@@ -15,7 +15,7 @@
                        BorderColor="#3498db"
                        HasShadow="True"
                        HorizontalOptions="Center">
-                    <Image Source="profile_placeholder.png" Aspect="AspectFill" />
+                    
                 </Frame>
                 <Label Text="Jan Kowalski" 
                        FontSize="24" 

@@ -7,7 +7,17 @@ namespace MedicalAppointmentApp.Views
     {
         public MyAppointmentsPage()
         {
-            InitializeComponent();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing MyAppointmentsPage");
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("MyAppointmentsPage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing MyAppointmentsPage: {ex}");
+            }
+            
         }
 
         void OnUpcomingTabClicked(object sender, EventArgs e)

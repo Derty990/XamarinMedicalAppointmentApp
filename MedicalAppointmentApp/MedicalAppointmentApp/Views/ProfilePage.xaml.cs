@@ -7,7 +7,17 @@ namespace MedicalAppointmentApp.Views
     {
         public ProfilePage()
         {
-            InitializeComponent();
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("Initializing ProfilePage");
+                InitializeComponent();
+                System.Diagnostics.Debug.WriteLine("ProfilePage initialized successfully");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error initializing ProfilePage: {ex}");
+            }
+           
         }
 
         async void OnEditProfileClicked(object sender, EventArgs e)

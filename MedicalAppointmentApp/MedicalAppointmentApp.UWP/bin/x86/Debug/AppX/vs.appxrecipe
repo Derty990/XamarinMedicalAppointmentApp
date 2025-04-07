@@ -30,13 +30,13 @@
     <AppXManifest Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2025-04-07T17:21:50.277</Modified>
+      <Modified>2025-04-07T21:27:07.127</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\MedicalAppointmentApp.UWP.exe">
       <PackagePath>entrypoint\MedicalAppointmentApp.UWP.exe</PackagePath>
-      <Modified>2025-04-07T17:11:39.907</Modified>
+      <Modified>2025-04-07T21:22:24.752</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Bartek\.nuget\packages\runtime.win10-x86.microsoft.netcore.universalwindowsplatform\6.2.12\runtimes\win10-x86\lib\uap10.0.15138\System.Runtime.dll">
       <PackagePath>System.Runtime.dll</PackagePath>
@@ -68,7 +68,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp\bin\Debug\netstandard2.0\MedicalAppointmentApp.dll">
       <PackagePath>MedicalAppointmentApp.dll</PackagePath>
-      <Modified>2025-04-07T17:21:46.894</Modified>
+      <Modified>2025-04-07T21:27:03.759</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\Bartek\.nuget\packages\win2d.uwp\1.20.0\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
       <PackagePath>Microsoft.Graphics.Canvas.winmd</PackagePath>
@@ -227,11 +227,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2025-04-07T17:21:49.576</Modified>
+      <Modified>2025-04-07T21:27:06.432</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
-      <Modified>2025-04-07T17:21:49.576</Modified>
+      <Modified>2025-04-07T21:27:06.432</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Microsoft SDKs\Windows Kits\10\ExtensionSDKs\Microsoft.UniversalCRT.Debug\10.0.22621.0\\redist\Debug\x86\ucrtbased.dll">
       <PackagePath>ucrtbased.dll</PackagePath>
@@ -247,11 +247,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2025-04-07T17:11:40.614</Modified>
+      <Modified>2025-04-07T21:22:25.389</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="F:\XamarinCourse\MedicalAppointmentApp\MedicalAppointmentApp\MedicalAppointmentApp.UWP\bin\x86\Debug\Core\MedicalAppointmentApp.UWP.exe">
       <PackagePath>MedicalAppointmentApp.UWP.exe</PackagePath>
-      <Modified>2025-04-07T17:21:50.275</Modified>
+      <Modified>2025-04-07T21:27:07.124</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

@@ -82,12 +82,12 @@
                     <!-- Zgody -->
                     <StackLayout Orientation="Horizontal">
                         <CheckBox x:Name="TermsCheckbox" VerticalOptions="Center" />
-                        <Label Text="Zapoznałem się i akceptuję regulamin" VerticalOptions="Center" />
+                        <Label Text="* Zapoznałem się i akceptuję regulamin" VerticalOptions="Center" TextColor="Black" />
                     </StackLayout>
 
                     <StackLayout Orientation="Horizontal">
                         <CheckBox x:Name="PrivacyCheckbox" VerticalOptions="Center" />
-                        <Label Text="Wyrażam zgodę na przetwarzanie danych osobowych" VerticalOptions="Center" />
+                        <Label Text="Wyrażam zgodę na przetwarzanie danych osobowych" VerticalOptions="Center" TextColor="Black" />
                     </StackLayout>
 
                     <!-- Przyciski -->

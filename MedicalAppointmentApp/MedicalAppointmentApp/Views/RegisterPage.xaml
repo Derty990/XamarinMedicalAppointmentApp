@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MedicalAppointmentApp.Views.RegisterPage"
+             Title="Rejestracja"
+             BackgroundColor="#f5f5f5">
+    <ScrollView>
+        <StackLayout Padding="30" Spacing="20">
+            <Label Text="Utwórz nowe konto" 
+                   FontSize="24" 
+                   TextColor="#2c3e50"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   Margin="0,20,0,20" />
+
+            <Frame BackgroundColor="White" CornerRadius="10" HasShadow="True" Padding="20">
+                <StackLayout Spacing="15">
+                    <!-- Dane osobowe -->
+                    <Label Text="Dane osobowe" 
+                           FontSize="18" 
+                           TextColor="#2c3e50" 
+                           FontAttributes="Bold" />
+
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Entry Grid.Column="0" Placeholder="Imię" x:Name="FirstNameEntry" />
+                        <Entry Grid.Column="1" Placeholder="Nazwisko" x:Name="LastNameEntry" />
+                    </Grid>
+
+                    <Entry Placeholder="Email" x:Name="EmailEntry" Keyboard="Email" />
+                    <Entry Placeholder="Telefon" x:Name="PhoneEntry" Keyboard="Telephone" />
+
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Data urodzenia" VerticalOptions="Center" />
+                        <DatePicker x:Name="BirthdayPicker" HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Płeć" VerticalOptions="Center" />
+                        <Picker x:Name="GenderPicker" HorizontalOptions="FillAndExpand">
+                            <Picker.Items>
+                                <x:String>Mężczyzna</x:String>
+                                <x:String>Kobieta</x:String>
+                                <x:String>Inna</x:String>
+                            </Picker.Items>
+                        </Picker>
+                    </StackLayout>
+
+                    <!-- Dane adresowe -->
+                    <Label Text="Dane adresowe" 
+                           FontSize="18" 
+                           TextColor="#2c3e50" 
+                           FontAttributes="Bold"
+                           Margin="0,10,0,0" />
+
+                    <Entry Placeholder="Adres" x:Name="AddressEntry" />
+
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Entry Grid.Column="0" Placeholder="Kod pocztowy" x:Name="PostalCodeEntry" WidthRequest="100" />
+                        <Entry Grid.Column="1" Placeholder="Miasto" x:Name="CityEntry" />
+                    </Grid>
+
+                    <!-- Dane do logowania -->
+                    <Label Text="Dane do logowania" 
+                           FontSize="18" 
+                           TextColor="#2c3e50" 
+                           FontAttributes="Bold"
+                           Margin="0,10,0,0" />
+
+                    <Entry Placeholder="Hasło" x:Name="PasswordEntry" IsPassword="True" />
+                    <Entry Placeholder="Powtórz hasło" x:Name="ConfirmPasswordEntry" IsPassword="True" />
+
+                    <!-- Zgody -->
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Black">
+                        <CheckBox x:Name="TermsCheckbox" VerticalOptions="Center" Color="Red" />
+                        <Label Text="Zapoznałem się i akceptuję regulamin" VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" BackgroundColor="Black">
+                        <CheckBox x:Name="PrivacyCheckbox" VerticalOptions="Center" Color="Red" />
+                        <Label Text="Wyrażam zgodę na przetwarzanie danych osobowych" VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <!-- Przyciski -->
+                    <Button Text="Zarejestruj się" 
+                            BackgroundColor="#3498db" 
+                            TextColor="White" 
+                            CornerRadius="25"
+                            HeightRequest="50"
+                            Clicked="OnRegisterClicked"
+                            Margin="0,10,0,0" />
+
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                        <Label Text="Masz już konto?" VerticalOptions="Center" />
+                        <Label Text="Zaloguj się" 
+                               TextColor="#3498db" 
+                               VerticalOptions="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnLoginTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

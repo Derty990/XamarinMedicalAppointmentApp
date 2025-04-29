@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MedicalAppointmentApp.Views.ProfilePage"
+             Title="Mój profil">
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <!-- Zdjęcie profilowe i nagłówek -->
+            <StackLayout HorizontalOptions="Center" Spacing="10" Margin="0,0,0,20">
+                <Frame CornerRadius="75" 
+                       HeightRequest="150" 
+                       WidthRequest="150"
+                       IsClippedToBounds="True"
+                       Padding="0"
+                       BorderColor="#3498db"
+                       HorizontalOptions="Center">
+                    <Image Source="profile_placeholder.png" Aspect="AspectFill" />
+                </Frame>
+                <Label Text="Jan Kowalski" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       TextColor="#2c3e50" />
+                <Label Text="jan.kowalski@email.com" 
+                       FontSize="16" 
+                       HorizontalOptions="Center" 
+                       TextColor="#7f8c8d" />
+                <Button Text="Edytuj profil" 
+                        BackgroundColor="#3498db" 
+                        TextColor="White" 
+                        CornerRadius="20" 
+                        WidthRequest="150"
+                        HeightRequest="40"
+                        Clicked="OnEditProfileClicked" />
+            </StackLayout>
+
+            <!-- Informacje osobiste -->
+            <Frame CornerRadius="10" HasShadow="True" Padding="15">
+                <StackLayout Spacing="15">
+                    <Label Text="Informacje osobiste" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           TextColor="#2c3e50" />
+
+                    <Grid ColumnSpacing="15" RowSpacing="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0" Text="Data urodzenia:" TextColor="#7f8c8d" />
+                        <Label Grid.Row="0" Grid.Column="1" Text="12.05.1985" TextColor="#2c3e50" />
+
+                        <Label Grid.Row="1" Grid.Column="0" Text="Płeć:" TextColor="#7f8c8d" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="Mężczyzna" TextColor="#2c3e50" />
+
+                        <Label Grid.Row="2" Grid.Column="0" Text="Telefon:" TextColor="#7f8c8d" />
+                        <Label Grid.Row="2" Grid.Column="1" Text="+48 123 456 789" TextColor="#2c3e50" />
+
+                        <Label Grid.Row="3" Grid.Column="0" Text="Adres:" TextColor="#7f8c8d" />
+                        <Label Grid.Row="3" Grid.Column="1" Text="ul. Kwiatowa 15, 00-001 Warszawa" TextColor="#2c3e50" />
+
+                        <Label Grid.Row="4" Grid.Column="0" Text="Nr ubezpieczenia:" TextColor="#7f8c8d" />
+                        <Label Grid.Row="4" Grid.Column="1" Text="12345678901" TextColor="#2c3e50" />
+                    </Grid>
+                </StackLayout>
+            </Frame>
+
+            <!-- Historia medyczna -->
+            <Frame CornerRadius="10" HasShadow="True" Padding="15">
+                <StackLayout Spacing="15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" 
+                               Text="Historia medyczna" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#2c3e50" />
+                        <Button Grid.Column="1" 
+                                Text="Zobacz wszystko" 
+                                BackgroundColor="Transparent" 
+                                TextColor="#3498db"
+                                FontSize="14"
+                                Clicked="OnViewMedicalHistoryClicked" />
+                    </Grid>
+
+                    <StackLayout Spacing="10">
+                        <Frame BorderColor="#f0f0f0" CornerRadius="5" Padding="10">
+                            <StackLayout>
+                                <Label Text="Badanie kardiologiczne" FontAttributes="Bold" />
+                                <Label Text="Dr Anna Kowalska" TextColor="#7f8c8d" />
+                                <Label Text="15.03.2025" TextColor="#7f8c8d" />
+                            </StackLayout>
+                        </Frame>
+
+                        <Frame BorderColor="#f0f0f0" CornerRadius="5" Padding="10">
+                            <StackLayout>
+                                <Label Text="Wizyta kontrolna - okulista" FontAttributes="Bold" />
+                                <Label Text="Dr Jan Nowak" TextColor="#7f8c8d" />
+                                <Label Text="10.01.2025" TextColor="#7f8c8d" />
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Recepty -->
+            <Frame CornerRadius="10" HasShadow="True" Padding="15">
+                <StackLayout Spacing="15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" 
+                               Text="Moje recepty" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#2c3e50" />
+                        <Button Grid.Column="1" 
+                                Text="Zobacz wszystko" 
+                                BackgroundColor="Transparent" 
+                                TextColor="#3498db"
+                                FontSize="14"
+                                Clicked="OnViewPrescriptionsClicked" />
+                    </Grid>
+
+                    <StackLayout Spacing="10">
+                        <Frame BorderColor="#f0f0f0" CornerRadius="5" Padding="10">
+                            <StackLayout>
+                                <Label Text="Lek na nadciśnienie" FontAttributes="Bold" />
+                                <Label Text="Dr Anna Kowalska" TextColor="#7f8c8d" />
+                                <Label Text="Ważna do: 15.04.2025" TextColor="#7f8c8d" />
+                            </StackLayout>
+                        </Frame>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+
+            <!-- Ustawienia -->
+            <StackLayout Spacing="10" Margin="0,10,0,20">
+                <Button Text="Zmień hasło" 
+                        BackgroundColor="#ecf0f1" 
+                        TextColor="#2c3e50" 
+                        CornerRadius="10"
+                        Clicked="OnChangePasswordClicked" />
+                <Button Text="Powiadomienia" 
+                        BackgroundColor="#ecf0f1" 
+                        TextColor="#2c3e50" 
+                        CornerRadius="10"
+                        Clicked="OnNotificationsClicked" />
+                <Button Text="Wyloguj" 
+                        BackgroundColor="#e74c3c" 
+                        TextColor="White" 
+                        CornerRadius="10"
+                        Clicked="OnLogoutClicked" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

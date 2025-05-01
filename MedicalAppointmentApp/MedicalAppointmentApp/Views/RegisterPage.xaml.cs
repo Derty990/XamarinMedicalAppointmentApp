@@ -1,70 +1,41 @@
-﻿using System;
+﻿using MedicalAppointmentApp.XamarinApp.ViewModels; // Użyj właściwego namespace
+using System;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+using System.Diagnostics; // Dla Debug.WriteLine
 
-namespace MedicalAppointmentApp.Views
+namespace MedicalAppointmentApp.Views // Użyj właściwego namespace
 {
+    [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class RegisterPage : ContentPage
     {
         public RegisterPage()
         {
-            InitializeComponent();
+            InitializeComponent(); // Najpierw inicjalizacja XAML
 
-            // Ustaw domyślne wartości
-            BirthdayPicker.MaximumDate = DateTime.Today.AddYears(-18);
-            GenderPicker.SelectedIndex = 0;
-        }
-
-        async void OnRegisterClicked(object sender, EventArgs e)
-        {
-            // Walidacja podstawowa
-            if (string.IsNullOrEmpty(FirstNameEntry.Text) ||
-                string.IsNullOrEmpty(LastNameEntry.Text) ||
-                string.IsNullOrEmpty(EmailEntry.Text) ||
-                string.IsNullOrEmpty(PhoneEntry.Text) ||
-                string.IsNullOrEmpty(PasswordEntry.Text))
-            {
-                await DisplayAlert("Błąd", "Wypełnij wszystkie wymagane pola", "OK");
-                return;
-            }
-
-            // Walidacja haseł
-            if (PasswordEntry.Text != ConfirmPasswordEntry.Text)
-            {
-                await DisplayAlert("Błąd", "Hasła nie są identyczne", "OK");
-                return;
-            }
-
-            // Walidacja zgód
-            if (!TermsCheckbox.IsChecked || !PrivacyCheckbox.IsChecked)
-            {
-                await DisplayAlert("Błąd", "Musisz zaakceptować regulamin i wyrazić zgodę na przetwarzanie danych", "OK");
-                return;
-            }
-
+            // Dodajemy try-catch wokół tworzenia ViewModelu
             try
             {
-                // Tutaj w przyszłości byłaby rejestracja w bazie danych
-
-                // Dla celów demonstracyjnych wyświetlamy komunikat sukcesu
-                bool result = await DisplayAlert("Sukces",
-                    "Konto zostało utworzone pomyślnie! Możesz teraz się zalogować.",
-                    "Przejdź do logowania", "OK");
-
-                if (result)
-                {
-                    // Wróć do strony logowania
-                    await Navigation.PopAsync();
-                }
+                BindingContext = new RegisterViewModel(); // Ta linia prawdopodobnie powoduje błąd
             }
-            catch (Exception ex)
+            catch (Exception ex) // Łapiemy jakikolwiek wyjątek
             {
-                await DisplayAlert("Błąd", $"Wystąpił błąd: {ex.Message}", "OK");
+                // Wypisz PEŁNE informacje o błędzie do okna Output -> Debug
+                Debug.WriteLine($"!!! KRYTYCZNY BŁĄD podczas tworzenia RegisterViewModel: {ex.ToString()}");
+
+                // Pokaż prosty komunikat użytkownikowi
+                // Używamy Device.BeginInvokeOnMainThread, bo jesteśmy w konstruktorze
+                Device.BeginInvokeOnMainThread(async () => {
+                    await DisplayAlert("Błąd Inicjalizacji Strony", $"Nie można załadować strony rejestracji. Błąd: {ex.Message}", "OK");
+                    // Można dodać nawigację wstecz, żeby aplikacja całkiem nie utknęła
+                    // await Navigation.PopAsync();
+                });
             }
         }
 
+        // Metoda nawigacji "Zaloguj się" zostaje bez zmian
         async void OnLoginTapped(object sender, EventArgs e)
         {
-            // Wróć do strony logowania
             await Navigation.PopAsync();
         }
     }

@@ -1,43 +1,41 @@
-﻿using System.Collections.Generic;
+﻿// Plik: Models/Doctor.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic; // Potrzebne dla ICollection
 
-namespace MedicalAppointmentApp.WebApi.Entities
+namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
 {
+    [Table("Doctors")]
     public class Doctor
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DoctorId { get; set; }
 
+        // Klucz obcy do tabeli Users (relacja jeden-do-jeden)
         [Required]
-        public int UserId { get; set; } // Klucz obcy do User
+        public int UserId { get; set; }
 
+        // Klucz obcy do tabeli Specializations
         [Required]
-        [MaxLength(50)]
-        public required string LicenseNumber { get; set; }
+        public int SpecializationId { get; set; }
 
-        public int? SpecializationId { get; set; } // Klucz obcy do Specialization (może być null)
+        // Usunięto: LicenseNumber, PictureUrl
 
-        [MaxLength(255)]
-        public string? PictureUrl { get; set; }
+        // --- Właściwości Nawigacyjne ---
 
-        // --- Navigation Properties ---
+        // Nawigacja do powiązanego użytkownika
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
-        // Relacja 1-do-1 z User
-        [ForeignKey("UserId")] // Jawne wskazanie klucza obcego
-        public virtual User User { get; set; } = null!; // = null!; oznacza, że oczekujemy, że User zawsze będzie powiązany
-
-        // Relacja 1-do-wielu ze Specialization
+        // Nawigacja do specjalizacji
         [ForeignKey("SpecializationId")]
-        public virtual Specialization? Specialization { get; set; } // Może nie mieć specjalizacji
+        public virtual Specialization Specialization { get; set; }
 
-        // Wizyty prowadzone przez tego lekarza
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-
-        // Recepty wystawione przez tego lekarza
-        public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
-
-        // Relacja wiele-do-wielu z Clinic
+        // Nawigacja do wpisów w tabeli łączącej DoctorClinic (kliniki, w których pracuje lekarz)
         public virtual ICollection<DoctorClinic> DoctorClinics { get; set; } = new List<DoctorClinic>();
+
+        // Nawigacja do wizyt prowadzonych przez tego lekarza
+        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

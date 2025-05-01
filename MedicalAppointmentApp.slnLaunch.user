@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "MedicalAppointmentApp\\MedicalAppointmentApp.UWP\\MedicalAppointmentApp.UWP.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "MedicalAppointmentApp.WebApi\\MedicalAppointmentApp.WebApi.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

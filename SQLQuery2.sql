@@ -1,61 +1,71 @@
+-- Usuwanie tabel w odwrotnej kolejnoœci zale¿noœci
+DROP TABLE IF EXISTS DoctorClinics;
+DROP TABLE IF EXISTS Appointments;
+DROP TABLE IF EXISTS Doctors;
+DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Clinics;
+DROP TABLE IF EXISTS Addresses;
+DROP TABLE IF EXISTS Specializations;
+DROP TABLE IF EXISTS AppointmentStatuses;
+DROP TABLE IF EXISTS MedicalRecords;
+DROP TABLE IF EXISTS AppointmentStatuses;
+DROP TABLE IF EXISTS Prescriptions;
 
-DROP TABLE IF EXISTS Prescriptions
-DROP TABLE IF EXISTS MedicalRecords
-DROP TABLE IF EXISTS Appointments
-DROP TABLE IF EXISTS DoctorClinics
-DROP TABLE IF EXISTS Doctors
-DROP TABLE IF EXISTS Users
-DROP TABLE IF EXISTS Clinics
-DROP TABLE IF EXISTS Specializations
--- 1. Tabele bez kluczy obcych (lub odwo³uj¹ce siê tylko do siebie)
+
+-- 1. Tabele podstawowe
+
+CREATE TABLE Addresses (
+    AddressId INT PRIMARY KEY IDENTITY(1,1),
+    Street NVARCHAR(150) NOT NULL,
+    City NVARCHAR(100) NOT NULL,
+    PostalCode NVARCHAR(10) NOT NULL
+);
 
 CREATE TABLE Specializations (
     SpecializationId INT PRIMARY KEY IDENTITY(1,1),
-    Name NVARCHAR(100) NOT NULL,
-    Description NVARCHAR(500)
+    Name NVARCHAR(100) NOT NULL UNIQUE
 );
+
+CREATE TABLE AppointmentStatuses (
+    StatusId INT PRIMARY KEY IDENTITY(1,1),
+    StatusName NVARCHAR(50) NOT NULL UNIQUE -- Np. 'Scheduled', 'Completed', 'Cancelled'
+);
+
+-- 2. Tabele odwo³uj¹ce siê do tabel podstawowych
 
 CREATE TABLE Clinics (
     ClinicId INT PRIMARY KEY IDENTITY(1,1),
     Name NVARCHAR(100) NOT NULL,
-    Address NVARCHAR(200) NOT NULL,
-    Phone NVARCHAR(20),
-    Email NVARCHAR(100),
-    IsActive BIT DEFAULT 1 NOT NULL
+    AddressId INT NOT NULL,              -- Klucz obcy do tabeli Addresses
+    FOREIGN KEY (AddressId) REFERENCES Addresses(AddressId)
 );
-
--- 2. Tabele odwo³uj¹ce siê do tabel z kroku 1.
-
 
 CREATE TABLE Users (
     UserId INT PRIMARY KEY IDENTITY(1,1),
     FirstName NVARCHAR(50) NOT NULL,
     LastName NVARCHAR(50) NOT NULL,
     Email NVARCHAR(100) NOT NULL UNIQUE,
-    PasswordHash NVARCHAR(255) NOT NULL, -- Pamiêtaj o bezpiecznym hashowaniu!
-    DateOfBirth DATE,
-    Gender NVARCHAR(10),
-    Phone NVARCHAR(20),
-    Address NVARCHAR(200),
-    RoleId INT NOT NULL, -- Przechowuje ID roli (np. 1=Patient, 2=Doctor z Enuma)
-    IsActive BIT DEFAULT 1 NOT NULL,
-    RegisteredDate DATETIME DEFAULT GETDATE() NOT NULL
+    PasswordHash NVARCHAR(255) NOT NULL,
+    AddressId INT NULL,                 -- Klucz obcy do Addresses (NULL jeœli u¿ytkownik nie musi mieæ adresu)
+    RoleId INT NOT NULL                 -- Mapowane na Enum (1=Patient, 2=Doctor, 3=Admin)
+    -- Usuniêto: DateOfBirth, Gender, Phone, IsActive, RegisteredDate
+    FOREIGN KEY (AddressId) REFERENCES Addresses(AddressId)
 );
 
--- Lekarze (odwo³uje siê do Users i Specializations)
+-- 3. Tabele zale¿ne od Users, Clinics, Specializations
+
 CREATE TABLE Doctors (
     DoctorId INT PRIMARY KEY IDENTITY(1,1),
-    UserId INT NOT NULL UNIQUE,
-    LicenseNumber NVARCHAR(50) NOT NULL,
-    SpecializationId INT,
-    PictureUrl NVARCHAR(255),
+    UserId INT NOT NULL UNIQUE,             -- Odwo³anie do u¿ytkownika, który jest lekarzem
+    SpecializationId INT NOT NULL,          -- Lekarz musi mieæ specjalizacjê
+    -- Usuniêto: LicenseNumber, PictureUrl
     FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
     FOREIGN KEY (SpecializationId) REFERENCES Specializations(SpecializationId)
 );
 
--- 3. Tabele odwo³uj¹ce siê do tabel z kroków 1 i 2.
+-- 4. Tabele relacyjne i g³ówne tabele transakcyjne
 
--- Tabela ³¹cz¹ca dla relacji wiele-do-wielu miêdzy Doctors a Clinics
+-- Tabela ³¹cz¹ca dla relacji Wiele-do-Wielu: Doctors <-> Clinics
 CREATE TABLE DoctorClinics (
     DoctorClinicId INT PRIMARY KEY IDENTITY(1,1),
     DoctorId INT NOT NULL,
@@ -65,49 +75,20 @@ CREATE TABLE DoctorClinics (
     UNIQUE (DoctorId, ClinicId)
 );
 
--- Wizyty (odwo³uje siê do Users, Doctors i Clinics)
+-- Wizyty
 CREATE TABLE Appointments (
     AppointmentId INT PRIMARY KEY IDENTITY(1,1),
-    PatientId INT NOT NULL,
-    DoctorId INT NOT NULL,
-    ClinicId INT NOT NULL,
+    PatientId INT NOT NULL,             -- U¿ytkownik (pacjent)
+    DoctorId INT NOT NULL,              -- Lekarz (z tabeli Doctors)
+    ClinicId INT NOT NULL,              -- Klinika (z tabeli Clinics)
     AppointmentDate DATE NOT NULL,
     StartTime TIME NOT NULL,
-    EndTime TIME NOT NULL,
-    Status NVARCHAR(20) NOT NULL DEFAULT 'Scheduled' CHECK (Status IN ('Scheduled', 'Completed', 'Cancelled', 'NoShow')),
-    Notes NVARCHAR(500),
-    CreatedDate DATETIME DEFAULT GETDATE() NOT NULL,
+    EndTime TIME NOT NULL,              -- Pozostawione dla elastycznoœci, choæ mo¿na by obliczaæ
+    StatusId INT NOT NULL,              -- Klucz obcy do AppointmentStatuses
+    -- Usuniêto: Notes, CreatedDate
     FOREIGN KEY (PatientId) REFERENCES Users(UserId),
     FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId),
     FOREIGN KEY (ClinicId) REFERENCES Clinics(ClinicId),
+    FOREIGN KEY (StatusId) REFERENCES AppointmentStatuses(StatusId),
     CHECK (EndTime > StartTime)
-);
-
--- 4. Tabele odwo³uj¹ce siê do wczeœniejszych tabel
-
--- Historia medyczna (odwo³uje siê do Users i Appointments)
-CREATE TABLE MedicalRecords (
-    RecordId INT PRIMARY KEY IDENTITY(1,1),
-    PatientId INT NOT NULL,
-    AppointmentId INT UNIQUE,
-    Diagnosis NVARCHAR(500),
-    RecordDate DATETIME NOT NULL DEFAULT GETDATE(),
-    FOREIGN KEY (PatientId) REFERENCES Users(UserId),
-    FOREIGN KEY (AppointmentId) REFERENCES Appointments(AppointmentId)
-);
-
--- Recepty (odwo³uje siê do Users, Doctors i Appointments)
-
-CREATE TABLE Prescriptions (
-    PrescriptionId INT PRIMARY KEY IDENTITY(1,1),
-    PatientId INT NOT NULL,
-    DoctorId INT NOT NULL,
-    AppointmentId INT, -- Usuniêto UNIQUE st¹d
-    Medication NVARCHAR(500) NOT NULL,
-    Dosage NVARCHAR(200) NOT NULL,
-    IssuedDate DATETIME NOT NULL DEFAULT GETDATE(),
-    ExpiryDate DATE,
-    FOREIGN KEY (PatientId) REFERENCES Users(UserId),
-    FOREIGN KEY (DoctorId) REFERENCES Doctors(DoctorId),
-    FOREIGN KEY (AppointmentId) REFERENCES Appointments(AppointmentId) -- Relacja nadal istnieje
 );

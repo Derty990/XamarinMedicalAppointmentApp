@@ -1,10 +1,14 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
-using MedicalAppointmentApp.WebApi.Entities;
+using MedicalAppointmentApp.WebApi.Models;
+using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using MedicalAppointmentApp.WebApi.Helpers; // Dla Console.WriteLine
 
 namespace MedicalAppointmentApp.WebApi.Controllers
 {
@@ -12,23 +16,27 @@ namespace MedicalAppointmentApp.WebApi.Controllers
     [ApiController]
     public class SpecializationsController : ControllerBase
     {
-        private readonly MedicalDbContext _context;
+        private readonly ApplicationDbContext _context;
+        // Usunięto IMapper
 
-        public SpecializationsController(MedicalDbContext context)
+        public SpecializationsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/specializations
+        // GET: api/Specializations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Specialization>>> GetSpecializations()
+        public async Task<ActionResult<IEnumerable<SpecializationForView>>> GetSpecializations()
         {
-            return await _context.Specializations.ToListAsync();
+            var specializations = await _context.Specializations.ToListAsync();
+            // Używamy operatora konwersji (zakładamy, że jest zdefiniowany w SpecializationForView)
+            var specializationsForView = specializations.Select(s => (SpecializationForView)s).ToList();
+            return Ok(specializationsForView);
         }
 
-        // GET: api/specializations/5
+        // GET: api/Specializations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Specialization>> GetSpecialization(int id)
+        public async Task<ActionResult<SpecializationForView>> GetSpecialization(int id)
         {
             var specialization = await _context.Specializations.FindAsync(id);
 
@@ -37,22 +45,56 @@ namespace MedicalAppointmentApp.WebApi.Controllers
                 return NotFound();
             }
 
-            return specialization;
+            SpecializationForView specializationForView = specialization; // Użycie operatora konwersji
+            return Ok(specializationForView);
         }
 
-        // PUT: api/specializations/5
-        // Aby zaktualizować, wysyłasz cały obiekt Specialization w ciele żądania
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSpecialization(int id, Specialization specialization)
+        // POST: api/Specializations
+        [HttpPost]
+        public async Task<ActionResult<SpecializationForView>> PostSpecialization(SpecializationForView specializationForView)
         {
-            if (id != specialization.SpecializationId)
+            // Używamy operatora konwersji ForView -> Encja (jeśli zdefiniowany)
+            // lub mapujemy ręcznie/CopyProperties
+            Specialization specialization = specializationForView; // Zakłada operator w SpecializationForView lub Encji
+            if (specialization == null)
             {
-                return BadRequest("ID in URL must match ID in request body.");
+                // Jeśli konwersja zawiedzie lub DTO jest puste
+                return BadRequest("Invalid input data.");
+            }
+            // Wyzeruj ID, aby baza nadała nowe (jeśli klucz to Identity)
+            specialization.SpecializationId = 0;
+
+            _context.Specializations.Add(specialization);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) // Uproszczona obsługa
+            {
+                Console.WriteLine($"DbUpdateException creating specialization: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error creating specialization. Name might already exist.");
             }
 
-            // TODO: Dodaj walidację dla obiektu specialization
+            SpecializationForView createdForView = specialization; // Konwersja zapisanej encji do ForView
+            return CreatedAtAction(nameof(GetSpecialization), new { id = specialization.SpecializationId }, createdForView);
+        }
 
-            _context.Entry(specialization).State = EntityState.Modified;
+        // PUT: api/Specializations/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutSpecialization(int id, SpecializationForView specializationForView)
+        {
+            // Znajdź istniejącą encję
+            var specializationToUpdate = await _context.Specializations.FindAsync(id);
+            if (specializationToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            // Użyj CopyProperties z helpera do zaktualizowania pól (bezpieczniejsze niż operator)
+            specializationToUpdate.CopyProperties(specializationForView); // Kopiuje tylko pasujące właściwości
+
+            // _context.Entry(specializationToUpdate).State = EntityState.Modified; // EF Core powinien sam wykryć zmiany
 
             try
             {
@@ -60,35 +102,18 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SpecializationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw; // Rzuć wyjątek dalej, jeśli problem jest inny
-                }
+                if (!await SpecializationExists(id)) { return NotFound(); } else { throw; }
+            }
+            catch (DbUpdateException ex) // Uproszczona obsługa
+            {
+                Console.WriteLine($"DbUpdateException updating specialization {id}: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error updating specialization. Name might already exist.");
             }
 
-            return NoContent(); // Sukces, brak treści w odpowiedzi
+            return NoContent();
         }
 
-        // POST: api/specializations
-        // Wysyłasz obiekt Specialization (bez ID) w ciele żądania
-        [HttpPost]
-        public async Task<ActionResult<Specialization>> PostSpecialization(Specialization specialization)
-        {
-            // TODO: Dodaj walidację dla obiektu specialization
-            // TODO: Rozważ użycie DTO, aby nie przyjmować SpecializationId od klienta
-
-            _context.Specializations.Add(specialization);
-            await _context.SaveChangesAsync();
-
-            // Zwraca 201 Created z nagłówkiem Location wskazującym na nowo utworzony zasób
-            return CreatedAtAction(nameof(GetSpecialization), new { id = specialization.SpecializationId }, specialization);
-        }
-
-        // DELETE: api/specializations/5
+        // DELETE: api/Specializations/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSpecialization(int id)
         {
@@ -98,18 +123,15 @@ namespace MedicalAppointmentApp.WebApi.Controllers
                 return NotFound();
             }
 
-            // TODO: Rozważ sprawdzenie, czy jacyś lekarze nie są powiązani z tą specjalizacją
-            // i ewentualnie zabroń usunięcia lub ustaw ich SpecializationId na null.
-
             _context.Specializations.Remove(specialization);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Uproszczona obsługa błędów (ewentualny błąd da 500)
 
             return NoContent();
         }
 
-        private bool SpecializationExists(int id)
+        private async Task<bool> SpecializationExists(int id)
         {
-            return _context.Specializations.Any(e => e.SpecializationId == id);
+            return await _context.Specializations.AnyAsync(e => e.SpecializationId == id);
         }
     }
 }

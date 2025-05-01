@@ -1,42 +1,45 @@
-using Microsoft.EntityFrameworkCore; // Dodano using dla EF Core
+using Microsoft.EntityFrameworkCore;
 using MedicalAppointmentApp.WebApi.Data;
-using System.Text.Json.Serialization; // Dodano using dla DbContext
+using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// --- Dodano konfiguracjê DbContext ---
-// Pobierz Connection String z appsettings.json
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// Zarejestruj MedicalDbContext
-builder.Services.AddDbContext<MedicalDbContext>(options =>
-    options.UseSqlServer(connectionString));
-// --- Koniec dodanego fragmentu ---
-
-// Add services to the container. (Reszta Twoich istniej¹cych serwisów)
-builder.Services.AddControllers() 
-    .AddJsonOptions(options => 
-    {
-        // Ignoruj cykle podczas serializacji
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace MedicalAppointmentApp.WebApi // U¿yj swojego namespace
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
+
+            // --- Konfiguracja DbContext ---
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString));
+            // --- Koniec konfiguracji DbContext ---
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                });
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            app.Run();
+        }
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

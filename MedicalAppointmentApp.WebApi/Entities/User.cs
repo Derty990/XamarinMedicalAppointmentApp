@@ -1,70 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Plik: Models/User.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Numerics;
 
-namespace MedicalAppointmentApp.WebApi.Entities
+namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
 {
-    // Rozważ dodanie tutaj enuma dla RoleId, jeśli chcesz go mieć też w backendzie
-    // public enum UserRole { Patient = 1, Doctor = 2, Admin = 3 }
-
+    [Table("Users")]
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public required string FirstName { get; set; }
+        [StringLength(50)]
+        public string FirstName { get; set; }
 
         [Required]
-        [MaxLength(50)]
-        public required string LastName { get; set; }
+        [StringLength(50)]
+        public string LastName { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        [EmailAddress]
-        public required string Email { get; set; } // UNIQUE jest obsługiwane przez EF Core na podstawie konwencji lub konfiguracji
+        [StringLength(100)]
+        // [EmailAddress] // Można dodać walidację formatu email
+        public string Email { get; set; }
+        // Uwaga: Ograniczenie UNIQUE dla Email najlepiej skonfigurować w DbContext (OnModelCreating) lub bezpośrednio w bazie
 
         [Required]
-        [MaxLength(255)] // Długość zależy od użytego algorytmu hashowania
-        public required string PasswordHash { get; set; }
+        [StringLength(255)] // Dostosuj długość, jeśli wiesz, jaki będzie hash
+        public string PasswordHash { get; set; }
 
-        public DateTime? DateOfBirth { get; set; }
-
-        [MaxLength(10)]
-        public string? Gender { get; set; }
-
-        [MaxLength(20)]
-        public string? Phone { get; set; }
-
-        [MaxLength(200)]
-        public string? Address { get; set; }
+        // Klucz obcy do tabeli Addresses - nullable (dlatego int?)
+        public int? AddressId { get; set; }
 
         [Required]
-        public int RoleId { get; set; } // Będzie odpowiadać wartościom z Twojego Enuma w aplikacji Xamarin
+        public int RoleId { get; set; } // Będzie mapowane na Enum w logice aplikacji
 
-        [Required]
-        public bool IsActive { get; set; } = true;
+        // --- Właściwości Nawigacyjne ---
 
-        [Required]
-        public DateTime RegisteredDate { get; set; } = DateTime.UtcNow; // Użyj UtcNow dla spójności
+        // Właściwość nawigacyjna do powiązanego adresu (może być null)
+        // [ForeignKey("AddressId")] wskazuje, która właściwość jest kluczem obcym dla tej nawigacji
+        [ForeignKey("AddressId")]
+        public virtual Address? Address { get; set; }
 
-        // --- Navigation Properties ---
-
-        // Jeśli User i Doctor to relacja 1-do-1 (jeden User może być jednym Doktorem)
+        // Właściwość nawigacyjna do powiązanego rekordu Doctor (jeśli ten User jest lekarzem)
+        // Relacja jeden-do-jeden (lub zero)
         public virtual Doctor? Doctor { get; set; }
 
-        // Wizyty, gdzie ten użytkownik jest pacjentem
-        [InverseProperty("Patient")] // Pomaga EF Core rozróżnić relacje
+        // Właściwość nawigacyjna dla wizyt, gdzie ten użytkownik jest pacjentem
+        [InverseProperty("Patient")] // Pomaga EF Core rozróżnić, która relacja w Appointment dotyczy pacjenta
         public virtual ICollection<Appointment> PatientAppointments { get; set; } = new List<Appointment>();
-
-        // Recepty wystawione dla tego użytkownika (pacjenta)
-        [InverseProperty("Patient")]
-        public virtual ICollection<Prescription> PatientPrescriptions { get; set; } = new List<Prescription>();
-
-        // Historia medyczna tego użytkownika (pacjenta)
-        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
     }
 }

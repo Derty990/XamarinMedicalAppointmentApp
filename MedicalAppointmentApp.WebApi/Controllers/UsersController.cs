@@ -1,10 +1,16 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
-using MedicalAppointmentApp.WebApi.Entities;
+using MedicalAppointmentApp.WebApi.Models;
+using MedicalAppointmentApp.WebApi.ForView; // Do odpowiedzi
+using MedicalAppointmentApp.WebApi.Dtos;    // Do przyjmowania danych (Create/Update)
+using MedicalAppointmentApp.WebApi.Helpers; // Dla CopyProperties
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
+using BCrypt.Net; // Using dla BCrypt
 
 namespace MedicalAppointmentApp.WebApi.Controllers
 {
@@ -12,137 +18,127 @@ namespace MedicalAppointmentApp.WebApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MedicalDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public UsersController(MedicalDbContext context)
+        public UsersController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/users
+        // GET: api/Users - Zwraca listę UserForView
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers(bool onlyActive = true)
+        public async Task<ActionResult<IEnumerable<UserForView>>> GetUsers()
         {
-            // !!! UWAGA: NIGDY nie zwracaj haseł (nawet hashy) w rzeczywistej aplikacji !!!
-            // TODO: Użyj DTO (Data Transfer Object), aby wybrać tylko potrzebne pola bez PasswordHash!
-            if (onlyActive)
-            {
-                return await _context.Users.Where(u => u.IsActive).ToListAsync();
-            }
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            var usersForView = users.Select(u => (UserForView)u).ToList(); // Użycie operatora
+            return Ok(usersForView);
         }
 
-        // GET: api/users/5
+        // GET: api/Users/5 - Zwraca jednego UserForView
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserForView>> GetUser(int id)
         {
-            // !!! UWAGA: NIGDY nie zwracaj haseł (nawet hashy) w rzeczywistej aplikacji !!!
-            // TODO: Użyj DTO!
             var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            if (user == null) return NotFound();
+            UserForView forView = user; // Użycie operatora
+            return Ok(forView);
         }
 
-        // PUT: api/users/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        // POST: api/Users - Przyjmuje UserCreateDto, zwraca UserForView
+        [HttpPost]
+        public async Task<ActionResult<UserForView>> PostUser(UserCreateDto userCreateDto)
         {
-            // !!! UWAGA: NIGDY nie aktualizuj PasswordHash w ten sposób !!!
-            // TODO: Użyj DTO! Oddzielna metoda do zmiany hasła.
-            // TODO: Dodaj walidację
-            if (id != user.UserId)
+            if (await _context.Users.AnyAsync(u => u.Email == userCreateDto.Email))
+                return Conflict($"User with email '{userCreateDto.Email}' already exists.");
+            if (userCreateDto.AddressId.HasValue && !await _context.Addresses.AnyAsync(a => a.AddressId == userCreateDto.AddressId.Value))
+                return BadRequest($"Invalid AddressId: Address {userCreateDto.AddressId} does not exist.");
+            if (string.IsNullOrEmpty(userCreateDto.Password))
+                return BadRequest("Password is required.");
+
+            // Ręczne mapowanie z UserCreateDto na Encję User
+            var user = new User();
+            user.CopyProperties(userCreateDto); // Kopiuje pasujące pola (FirstName, LastName, Email, RoleId, AddressId)
+
+            // Hashowanie hasła
+            try { user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password); }
+            catch (Exception ex)
             {
-                return BadRequest();
+                Console.WriteLine($"Error hashing password: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error processing password.");
             }
 
-            // Unikaj nadpisywania hasła i daty rejestracji przy aktualizacji innych danych
-            var existingUser = await _context.Users.FindAsync(id);
-            if (existingUser == null) return NotFound();
+            _context.Users.Add(user);
 
-            existingUser.FirstName = user.FirstName;
-            existingUser.LastName = user.LastName;
-            existingUser.Email = user.Email;
-            existingUser.DateOfBirth = user.DateOfBirth;
-            existingUser.Gender = user.Gender;
-            existingUser.Phone = user.Phone;
-            existingUser.Address = user.Address;
-            existingUser.RoleId = user.RoleId; // Czy rola może być zmieniana?
-            existingUser.IsActive = user.IsActive;
-            // existingUser.PasswordHash = user.PasswordHash; // NIE!!!
-            // existingUser.RegisteredDate = user.RegisteredDate; // Raczej nie
-
-            _context.Entry(existingUser).State = EntityState.Modified;
-
-
-            try
+            // Uproszczony try-catch
+            try { await _context.SaveChangesAsync(); }
+            catch (DbUpdateException ex)
             {
-                await _context.SaveChangesAsync();
+                Console.WriteLine($"DbUpdateException creating user: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error creating user. Email might already exist or address ID is invalid.");
             }
+
+            UserForView createdForView = user; // Konwersja zapisanej encji na ForView
+            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, createdForView);
+        }
+
+        // PUT: api/Users/5 - Przyjmuje UserUpdateDto
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUser(int id, UserUpdateDto userUpdateDto)
+        {
+            var userToUpdate = await _context.Users.FindAsync(id);
+            if (userToUpdate == null) return NotFound();
+
+            // Walidacja
+            if (userToUpdate.Email != userUpdateDto.Email && await _context.Users.AnyAsync(u => u.Email == userUpdateDto.Email && u.UserId != id))
+                return Conflict($"User with email '{userUpdateDto.Email}' already exists.");
+            if (userUpdateDto.AddressId.HasValue && userToUpdate.AddressId != userUpdateDto.AddressId && !await _context.Addresses.AnyAsync(a => a.AddressId == userUpdateDto.AddressId.Value))
+                return BadRequest($"Invalid AddressId: Address {userUpdateDto.AddressId} does not exist.");
+
+            // Używamy CopyProperties, bo UserUpdateDto nie ma PasswordHash
+            userToUpdate.CopyProperties(userUpdateDto);
+
+            // Uproszczony try-catch
+            try { await _context.SaveChangesAsync(); }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!await UserExists(id)) { return NotFound(); } else { throw; }
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"DbUpdateException updating user {id}: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error updating user. Email might already exist or address ID is invalid.");
             }
 
             return NoContent();
         }
 
-        // POST: api/users (Rejestracja)
-        [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
-        {
-            // !!! UWAGA: Tutaj powinno być hashowanie hasła przed zapisem !!!
-            // TODO: Użyj DTO (np. RegisterUserDto z polem Password, a nie PasswordHash)
-            // TODO: Dodaj walidację (np. czy email już istnieje)
-            // TODO: Implementacja hashowania hasła (np. BCrypt.Net)
-            // user.PasswordHash = HashPassword(userDto.Password); // Przykładowo
-
-            // Ustaw datę rejestracji po stronie serwera
-            user.RegisteredDate = DateTime.UtcNow;
-            user.IsActive = true; // Zazwyczaj nowy użytkownik jest aktywny
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // TODO: Zwróć DTO bez PasswordHash!
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
-        }
-
-        // DELETE: api/users/5 (Miękkie usuwanie)
+        // DELETE: api/Users/5 - Bez zmian
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            if (user == null) return NotFound();
+            bool hasAppointments = await _context.Appointments.AnyAsync(a => a.PatientId == id);
+            if (hasAppointments) return Conflict($"Cannot delete User ID {id} because they have associated appointments as a patient.");
+            var doctorRecord = await _context.Doctors.FirstOrDefaultAsync(d => d.UserId == id);
+            if (doctorRecord != null)
             {
-                return NotFound();
+                bool doctorHasAppointments = await _context.Appointments.AnyAsync(a => a.DoctorId == doctorRecord.DoctorId);
+                if (doctorHasAppointments) return Conflict($"Cannot delete User ID {id} because they are a Doctor with associated appointments.");
             }
-
-            if (!user.IsActive) return NoContent();
-
-            // TODO: Co z powiązanymi danymi? Wizytami? Lekarzem?
-
-            user.IsActive = false; // Miękkie usuwanie
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
+            _context.Users.Remove(user);
+            try { await _context.SaveChangesAsync(); }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"DbUpdateException deleting user {id}: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting user.");
+            }
             return NoContent();
         }
 
-        private bool UserExists(int id)
+        private async Task<bool> UserExists(int id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return await _context.Users.AnyAsync(e => e.UserId == id);
         }
     }
 }

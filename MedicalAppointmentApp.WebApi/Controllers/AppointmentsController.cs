@@ -1,11 +1,15 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
-using MedicalAppointmentApp.WebApi.Entities;
+using MedicalAppointmentApp.WebApi.Models;
+using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
+using MedicalAppointmentApp.WebApi.Dtos;    // Używamy DTOs wejściowych
+using MedicalAppointmentApp.WebApi.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace MedicalAppointmentApp.WebApi.Controllers
 {
@@ -13,158 +17,155 @@ namespace MedicalAppointmentApp.WebApi.Controllers
     [ApiController]
     public class AppointmentsController : ControllerBase
     {
-        private readonly MedicalDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public AppointmentsController(MedicalDbContext context)
+        // Definicja DTO do aktualizacji (może być w osobnym pliku w Dtos)
+        public class AppointmentUpdateDto
+        {
+            [System.ComponentModel.DataAnnotations.Required]
+            public int StatusId { get; set; }
+            [System.ComponentModel.DataAnnotations.Required]
+            public System.DateTime AppointmentDate { get; set; }
+            [System.ComponentModel.DataAnnotations.Required]
+            public System.TimeSpan StartTime { get; set; }
+            [System.ComponentModel.DataAnnotations.Required]
+            public System.TimeSpan EndTime { get; set; }
+        }
+
+
+        public AppointmentsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/appointments
+        // GET: api/Appointments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments(int? patientId, int? doctorId, string? status) // Przykładowe filtry
+        public async Task<ActionResult<IEnumerable<AppointmentForView>>> GetAppointments()
         {
-            // TODO: Użyj DTO!
-            var query = _context.Appointments
-                        .Include(a => a.Patient)
-                        .Include(a => a.Doctor).ThenInclude(d => d.User)
-                        .Include(a => a.Clinic)
-                        .AsQueryable(); // Umożliwia dodawanie warunków
+            // Wymagane Include dla spłaszczonych danych w AppointmentForView
+            var appointments = await _context.Appointments
+                                          .Include(a => a.Patient)
+                                          .Include(a => a.Doctor)
+                                              .ThenInclude(d => d.User) // Potrzebujemy Usera z Lekarza
+                                          .Include(a => a.Clinic)
+                                          .Include(a => a.Status)
+                                          .ToListAsync();
 
-            if (patientId.HasValue)
-            {
-                query = query.Where(a => a.PatientId == patientId.Value);
-            }
-            if (doctorId.HasValue)
-            {
-                query = query.Where(a => a.DoctorId == doctorId.Value);
-            }
-            if (!string.IsNullOrEmpty(status))
-            {
-                query = query.Where(a => a.Status == status);
-            }
-
-            return await query.OrderByDescending(a => a.AppointmentDate).ToListAsync();
+            // Konwersja listy encji na listę ForView za pomocą operatora
+            return Ok(appointments.Select(a => (AppointmentForView)a).ToList());
         }
 
         // GET: api/Appointments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Appointment>> GetAppointment(int id)
+        public async Task<ActionResult<AppointmentForView>> GetAppointment(int id)
         {
-            // TODO: Użyj DTO!
+            // Wymagane Include
             var appointment = await _context.Appointments
-                                            .Include(a => a.Patient)
-                                            .Include(a => a.Doctor).ThenInclude(d => d.User)
-                                            .Include(a => a.Clinic)
-                                            .Include(a => a.Prescriptions) // Załaduj powiązane recepty
-                                            .Include(a => a.MedicalRecord) // Załaduj powiązany rekord medyczny
-                                            .FirstOrDefaultAsync(a => a.AppointmentId == id);
+                                         .Include(a => a.Patient)
+                                         .Include(a => a.Doctor)
+                                             .ThenInclude(d => d.User)
+                                         .Include(a => a.Clinic)
+                                         .Include(a => a.Status)
+                                         .FirstOrDefaultAsync(a => a.AppointmentId == id);
 
-            if (appointment == null)
-            {
-                return NotFound();
-            }
+            if (appointment == null) return NotFound();
 
-            return Ok(appointment);
+            AppointmentForView forView = appointment; // Konwersja
+            return Ok(forView);
         }
 
-        // PUT: api/Appointments/5 (np. zmiana statusu, notatek)
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAppointment(int id, Appointment appointment) // TODO: Użyj DTO dla aktualizacji!
+        // POST: api/Appointments
+        [HttpPost]
+        public async Task<ActionResult<AppointmentForView>> PostAppointment(AppointmentCreateDto appointmentCreateDto) // Przyjmuje CreateDto
         {
-            if (id != appointment.AppointmentId)
+            // Walidacja FK przed zapisem
+            if (!await _context.Users.AnyAsync(u => u.UserId == appointmentCreateDto.PatientId)) return BadRequest($"Invalid PatientId: User {appointmentCreateDto.PatientId} not found.");
+            if (!await _context.Doctors.AnyAsync(d => d.DoctorId == appointmentCreateDto.DoctorId)) return BadRequest($"Invalid DoctorId: Doctor {appointmentCreateDto.DoctorId} not found.");
+            if (!await _context.Clinics.AnyAsync(c => c.ClinicId == appointmentCreateDto.ClinicId)) return BadRequest($"Invalid ClinicId: Clinic {appointmentCreateDto.ClinicId} not found.");
+            if (!await _context.AppointmentStatuses.AnyAsync(s => s.StatusId == appointmentCreateDto.StatusId)) return BadRequest($"Invalid StatusId: Status {appointmentCreateDto.StatusId} not found.");
+
+            var appointment = new Appointment();
+            appointment.CopyProperties(appointmentCreateDto); // Kopiuj pasujące pola
+
+            _context.Appointments.Add(appointment);
+
+            try { await _context.SaveChangesAsync(); }
+            catch (DbUpdateException ex)
             {
-                return BadRequest();
+                Console.WriteLine($"DbUpdateException creating appointment: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error creating appointment. Referenced entities might be invalid.");
             }
 
-            // TODO: Walidacja! Czy można zmienić status? Czy data jest poprawna?
-            // TODO: Zamiast przyjmować całą encję, lepiej przyjmować DTO np. UpdateAppointmentStatusDto { string Status; string Notes; }
-            // i aktualizować tylko te pola w encji pobranej z bazy.
+            // Pobierz ponownie z Include, aby zwrócić pełne ForView
+            var createdAppointmentWithData = await _context.Appointments
+                                          .Include(a => a.Patient)
+                                          .Include(a => a.Doctor.User)
+                                          .Include(a => a.Clinic)
+                                          .Include(a => a.Status)
+                                          .FirstOrDefaultAsync(a => a.AppointmentId == appointment.AppointmentId);
 
-            _context.Entry(appointment).State = EntityState.Modified;
-            // Unikaj modyfikacji pól, których nie powinno się zmieniać przez PUT, np. daty utworzenia
-            _context.Entry(appointment).Property(x => x.CreatedDate).IsModified = false;
-            _context.Entry(appointment).Property(x => x.PatientId).IsModified = false; // Zazwyczaj nie zmienia się pacjenta/lekarza/kliniki w ten sposób
-            _context.Entry(appointment).Property(x => x.DoctorId).IsModified = false;
-            _context.Entry(appointment).Property(x => x.ClinicId).IsModified = false;
+            if (createdAppointmentWithData == null)
+                return StatusCode(StatusCodes.Status500InternalServerError, "Could not retrieve created appointment data.");
 
+            AppointmentForView createdForView = createdAppointmentWithData; // Konwersja
 
-            try
+            return CreatedAtAction(nameof(GetAppointment), new { id = appointment.AppointmentId }, createdForView);
+        }
+
+        // PUT: api/Appointments/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAppointment(int id, AppointmentUpdateDto appointmentUpdateDto) // Przyjmuje UpdateDto
+        {
+            var appointmentToUpdate = await _context.Appointments.FindAsync(id);
+            if (appointmentToUpdate == null) return NotFound();
+
+            // Walidacja FK (np. dla StatusId, jeśli się zmienia)
+            if (appointmentToUpdate.StatusId != appointmentUpdateDto.StatusId &&
+                !await _context.AppointmentStatuses.AnyAsync(s => s.StatusId == appointmentUpdateDto.StatusId))
             {
-                await _context.SaveChangesAsync();
+                return BadRequest($"Invalid StatusId: Status {appointmentUpdateDto.StatusId} not found.");
             }
+            // TODO: Inne walidacje (np. czy data/godzina są poprawne)
+
+            // Mapuj tylko dozwolone pola
+            appointmentToUpdate.CopyProperties(appointmentUpdateDto);
+
+            try { await _context.SaveChangesAsync(); }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AppointmentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!await AppointmentExists(id)) { return NotFound(); } else { throw; }
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine($"DbUpdateException updating appointment {id}: {ex.InnerException?.Message ?? ex.Message}");
+                return Conflict("Database error updating appointment. Referenced status might be invalid.");
             }
 
             return NoContent();
         }
 
-        // POST: api/Appointments (Rezerwacja wizyty)
-        [HttpPost]
-        public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment) // TODO: Użyj DTO np. BookAppointmentDto!
-        {
-            // TODO: Walidacja! Czy termin jest dostępny? Czy pacjent/lekarz/klinika istnieją? Czy pacjent to nie lekarz? Itp.
-            // TODO: Ustaw CreatedDate po stronie serwera
-            appointment.CreatedDate = DateTime.UtcNow;
-            appointment.Status = "Scheduled"; // Ustaw domyślny status
-
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
-
-            // TODO: Zwróć DTO
-            return CreatedAtAction(nameof(GetAppointment), new { id = appointment.AppointmentId }, appointment);
-        }
-
-        // DELETE: api/Appointments/5 (Anulowanie wizyty - często zmiana statusu)
+        // DELETE: api/Appointments/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null)
-            {
-                return NotFound();
-            }
+            if (appointment == null) return NotFound();
 
-            // TODO: Logika biznesowa - czy można anulować? Kiedy? Jaki status ustawić?
-            // Zamiast usuwać, zmień status na 'Cancelled'
-            if (appointment.Status == "Scheduled") // Tylko zaplanowane można anulować?
-            {
-                appointment.Status = "Cancelled";
-                _context.Entry(appointment).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-            else if (appointment.Status == "Cancelled")
-            {
-                // Już anulowana, nic nie rób
-            }
-            else
-            {
-                // Nie można anulować wizyty w innym statusie?
-                return BadRequest($"Cannot cancel appointment with status '{appointment.Status}'.");
-            }
-
-
-            return NoContent();
-
-            /* // Kod dla fizycznego usuwania (jeśli potrzebne):
             _context.Appointments.Remove(appointment);
-            await _context.SaveChangesAsync();
+
+            try { await _context.SaveChangesAsync(); }
+            catch (DbUpdateException ex)
+            { // Na wszelki wypadek
+                Console.WriteLine($"DbUpdateException deleting appointment {id}: {ex.InnerException?.Message ?? ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting appointment.");
+            }
+
             return NoContent();
-            */
         }
 
-        private bool AppointmentExists(int id)
+        private async Task<bool> AppointmentExists(int id)
         {
-            return _context.Appointments.Any(e => e.AppointmentId == id);
+            return await _context.Appointments.AnyAsync(e => e.AppointmentId == id);
         }
     }
 }

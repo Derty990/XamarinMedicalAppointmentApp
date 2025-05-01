@@ -1,15 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Plik: Models/DoctorClinic.cs
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MedicalAppointmentApp.WebApi.Entities
+namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
 {
-    // Ta klasa reprezentuje tabelę łączącą DoctorClinics
-    // EF Core potrafi wykryć relację wiele-do-wielu i skonfigurować klucz złożony
+    [Table("DoctorClinics")]
     public class DoctorClinic
     {
-        // Można dodać własny klucz główny lub polegać na kluczu złożonym (DoctorId, ClinicId)
-        // Dodanie własnego klucza może uprościć niektóre operacje CRUD
-        [Key]
+        [Key] // Używamy klucza głównego surrogate
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DoctorClinicId { get; set; }
 
         [Required]
@@ -18,14 +17,12 @@ namespace MedicalAppointmentApp.WebApi.Entities
         [Required]
         public int ClinicId { get; set; }
 
-        // --- Navigation Properties ---
+        // --- Właściwości Nawigacyjne ---
+
         [ForeignKey("DoctorId")]
-        public virtual Doctor Doctor { get; set; } = null!;
+        public virtual Doctor Doctor { get; set; }
 
         [ForeignKey("ClinicId")]
-        public virtual Clinic Clinic { get; set; } = null!;
-
-        // Można tu dodać dodatkowe pola specyficzne dla tej relacji, np.
-        // public string? DoctorRoomNumber { get; set; }
+        public virtual Clinic Clinic { get; set; }
     }
 }

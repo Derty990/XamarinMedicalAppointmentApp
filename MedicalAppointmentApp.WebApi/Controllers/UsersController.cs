@@ -78,7 +78,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             }
 
             UserForView createdForView = user; // Konwersja zapisanej encji na ForView
-            return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, createdForView);
+            return Ok(createdForView);
         }
 
         // PUT: api/Users/5 - Przyjmuje UserUpdateDto

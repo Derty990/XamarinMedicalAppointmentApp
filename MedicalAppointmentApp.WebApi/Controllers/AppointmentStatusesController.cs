@@ -1,6 +1,6 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
+using MedicalAppointmentApp.WebApi.ForView; 
 using MedicalAppointmentApp.WebApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,16 +45,16 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<AppointmentStatusForView>> PostAppointmentStatus(AppointmentStatusForView statusForView)
         {
-            AppointmentStatus status = statusForView; // Zakłada operator konwersji
+            AppointmentStatus status = statusForView; 
             if (status == null) return BadRequest("Invalid input.");
-            status.StatusId = 0; // Nowy rekord
+            status.StatusId = 0; 
 
             _context.AppointmentStatuses.Add(status);
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa
+            catch (DbUpdateException ex) 
             {
                 Console.WriteLine($"DbUpdateException creating status: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict("Database error creating status. Name might already exist.");
@@ -81,7 +81,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             {
                 if (!await AppointmentStatusExists(id)) { return NotFound(); } else { throw; }
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa
+            catch (DbUpdateException ex) 
             {
                 Console.WriteLine($"DbUpdateException updating status {id}: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict("Database error updating status. Name might already exist.");
@@ -90,7 +90,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             return NoContent();
         }
 
-        // DELETE: api/AppointmentStatuses/5 - Nie zalecane
+        // DELETE: api/AppointmentStatuses/5 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointmentStatus(int id)
         {
@@ -102,7 +102,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa błędów FK
+            catch (DbUpdateException ex) 
             {
                 Console.WriteLine($"DbUpdateException deleting status {id}: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict($"Cannot delete Status ID {id} because it might be in use by Appointments.");

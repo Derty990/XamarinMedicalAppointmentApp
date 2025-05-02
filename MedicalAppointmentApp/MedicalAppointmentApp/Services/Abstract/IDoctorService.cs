@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace MedicalAppointmentApp.Services.Abstract
 {
-    public interface IDoctorService : IDataStore<DoctorForView> // T to WYGENEROWANY DoctorForView
+    public interface IDoctorService : IDataStore<DoctorForView> 
     {
-        Task<List<DoctorListItemDto>> GetDoctorListItemsAsync(); // Zwraca WYGENEROWANE DoctorListItemDto
-        Task<DoctorForView> CreateDoctorAsync(DoctorCreateDto createDto); // Używa WYGENEROWANYCH DTO
-        Task UpdateDoctorSpecializationAsync(int id, DoctorUpdateDto updateDto); // Zwraca Task
+        Task<List<DoctorListItemDto>> GetDoctorListItemsAsync();
+        Task<DoctorForView> CreateDoctorAsync(DoctorCreateDto createDto); 
+        Task UpdateDoctorSpecializationAsync(int id, DoctorUpdateDto updateDto); 
     }
 }

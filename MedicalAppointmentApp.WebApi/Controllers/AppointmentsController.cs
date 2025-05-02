@@ -1,7 +1,7 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
-using MedicalAppointmentApp.WebApi.Dtos;    // Używamy DTOs wejściowych
+using MedicalAppointmentApp.WebApi.ForView; 
+using MedicalAppointmentApp.WebApi.Dtos;   
 using MedicalAppointmentApp.WebApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +42,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppointmentForView>>> GetAppointments()
         {
-            // Wymagane Include dla spłaszczonych danych w AppointmentForView
+            
             var appointments = await _context.Appointments
                                           .Include(a => a.Patient)
                                           .Include(a => a.Doctor)
@@ -59,7 +59,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AppointmentForView>> GetAppointment(int id)
         {
-            // Wymagane Include
+           
             var appointment = await _context.Appointments
                                          .Include(a => a.Patient)
                                          .Include(a => a.Doctor)
@@ -76,16 +76,16 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Appointments
         [HttpPost]
-        public async Task<ActionResult<AppointmentForView>> PostAppointment(AppointmentCreateDto appointmentCreateDto) // Przyjmuje CreateDto
+        public async Task<ActionResult<AppointmentForView>> PostAppointment(AppointmentCreateDto appointmentCreateDto) 
         {
-            // Walidacja FK przed zapisem
+            
             if (!await _context.Users.AnyAsync(u => u.UserId == appointmentCreateDto.PatientId)) return BadRequest($"Invalid PatientId: User {appointmentCreateDto.PatientId} not found.");
             if (!await _context.Doctors.AnyAsync(d => d.DoctorId == appointmentCreateDto.DoctorId)) return BadRequest($"Invalid DoctorId: Doctor {appointmentCreateDto.DoctorId} not found.");
             if (!await _context.Clinics.AnyAsync(c => c.ClinicId == appointmentCreateDto.ClinicId)) return BadRequest($"Invalid ClinicId: Clinic {appointmentCreateDto.ClinicId} not found.");
             if (!await _context.AppointmentStatuses.AnyAsync(s => s.StatusId == appointmentCreateDto.StatusId)) return BadRequest($"Invalid StatusId: Status {appointmentCreateDto.StatusId} not found.");
 
             var appointment = new Appointment();
-            appointment.CopyProperties(appointmentCreateDto); // Kopiuj pasujące pola
+            appointment.CopyProperties(appointmentCreateDto); 
 
             _context.Appointments.Add(appointment);
 
@@ -119,7 +119,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             var appointmentToUpdate = await _context.Appointments.FindAsync(id);
             if (appointmentToUpdate == null) return NotFound();
 
-            // Walidacja FK (np. dla StatusId, jeśli się zmienia)
+           
             if (appointmentToUpdate.StatusId != appointmentUpdateDto.StatusId &&
                 !await _context.AppointmentStatuses.AnyAsync(s => s.StatusId == appointmentUpdateDto.StatusId))
             {

@@ -1,8 +1,7 @@
-﻿// Plik: Models/User.cs
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
+namespace MedicalAppointmentApp.WebApi.Models
 {
     [Table("Users")]
     public class User

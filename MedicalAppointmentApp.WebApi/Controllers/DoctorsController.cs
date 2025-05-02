@@ -1,7 +1,7 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView do odpowiedzi
-using MedicalAppointmentApp.WebApi.Dtos;    // Używamy DTOs wejściowych
+using MedicalAppointmentApp.WebApi.ForView;
+using MedicalAppointmentApp.WebApi.Dtos;   
 using MedicalAppointmentApp.WebApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DoctorListItemDto>>> GetDoctors()
         {
-            // Nadal potrzebujemy ręcznego mapowania na specyficzne DTO listy
+           
             return await _context.Doctors
                 .Include(d => d.User)
                 .Include(d => d.Specialization)
@@ -45,7 +45,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DoctorForView>> GetDoctor(int id)
         {
-            // Trzeba załadować powiązane dane dla operatora konwersji
+           
             var doctor = await _context.Doctors
                 .Include(d => d.User)
                 .Include(d => d.Specialization)
@@ -53,7 +53,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
             if (doctor == null) return NotFound();
 
-            DoctorForView forView = doctor; // Użycie operatora konwersji w DoctorForView
+            DoctorForView forView = doctor; 
             return Ok(forView);
         }
 
@@ -61,7 +61,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<DoctorForView>> PostDoctor(DoctorCreateDto doctorCreateDto)
         {
-            // Walidacja (jak poprzednio)
+            
             if (!await _context.Users.AnyAsync(u => u.UserId == doctorCreateDto.UserId)) return BadRequest($"Invalid UserId: User {doctorCreateDto.UserId} not found.");
             if (!await _context.Specializations.AnyAsync(s => s.SpecializationId == doctorCreateDto.SpecializationId)) return BadRequest($"Invalid SpecializationId: Specialization {doctorCreateDto.SpecializationId} not found.");
             if (await _context.Doctors.AnyAsync(d => d.UserId == doctorCreateDto.UserId)) return Conflict($"User {doctorCreateDto.UserId} is already a Doctor.");
@@ -71,7 +71,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
             _context.Doctors.Add(doctor);
 
-            // Uproszczony try-catch
+            
             try { await _context.SaveChangesAsync(); }
             catch (DbUpdateException ex)
             {
@@ -79,7 +79,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
                 return Conflict("Database error creating doctor. User might already be a doctor or User/Specialization ID is invalid.");
             }
 
-            // Pobierz ponownie z Include, aby stworzyć ForView do odpowiedzi
+           
             var createdDoctorWithData = await _context.Doctors
                 .Include(d => d.User)
                 .Include(d => d.Specialization)
@@ -87,7 +87,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
             if (createdDoctorWithData == null) return StatusCode(StatusCodes.Status500InternalServerError, "Could not retrieve created doctor data.");
 
-            DoctorForView createdForView = createdDoctorWithData; // Konwersja
+            DoctorForView createdForView = createdDoctorWithData; 
 
             return CreatedAtAction(nameof(GetDoctor), new { id = doctor.DoctorId }, createdForView);
         }
@@ -109,7 +109,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             // Ręczna aktualizacja pola, bo DTO ma tylko jedno pole
             doctorToUpdate.SpecializationId = doctorUpdateDto.SpecializationId;
 
-            // Uproszczony try-catch
+           
             try { await _context.SaveChangesAsync(); }
             catch (DbUpdateConcurrencyException)
             {

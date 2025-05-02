@@ -5,6 +5,6 @@
     {
         public int DoctorId { get; set; }
         public string FullName { get; set; } // Połączone FirstName + LastName z User
-        public string SpecializationName { get; set; } // Nazwa specjalizacji
+        public string SpecializationName { get; set; } 
     }
 }

@@ -1,11 +1,11 @@
 ﻿using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.Helpers; // Using dla PropertyUtil
+using MedicalAppointmentApp.WebApi.Helpers; 
 
 namespace MedicalAppointmentApp.WebApi.ForView
 {
     public class UserForView
     {
-        // Właściwości, które chcesz wysyłać/odbierać przez API
+        // Właściwości, które chcemy wysyłać/odbierać przez API
         public int UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

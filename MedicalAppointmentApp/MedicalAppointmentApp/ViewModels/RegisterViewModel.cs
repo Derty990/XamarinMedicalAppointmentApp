@@ -1,22 +1,20 @@
-﻿// W Xamarin - ViewModels/RegisterViewModel.cs
-using MedicalAppointmentApp.Services.Abstract;
-using MedicalAppointmentApp.XamarinApp.ApiClient; // Przestrzeń nazw WYGENEROWANEGO klienta i modeli/DTO!
-using MedicalAppointmentApp.XamarinApp.Services; // Przestrzeń nazw Twoich DataStore'ów i interfejsów
+﻿using MedicalAppointmentApp.Services.Abstract;
+using MedicalAppointmentApp.XamarinApp.ApiClient; 
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Xamarin.Forms; // Dla Command i DisplayAlert
+using Xamarin.Forms; 
 
 namespace MedicalAppointmentApp.XamarinApp.ViewModels
 {
-    public class RegisterViewModel : BaseViewModel // Użyj swojej klasy bazowej z INotifyPropertyChanged
+    public class RegisterViewModel : BaseViewModel 
     {
-        // Serwis - używamy interfejsu (jeśli go zdefiniowałeś)
+       
         private readonly IUserService _userService;
 
-        // --- Właściwości do powiązania z XAML ---
+        
 
         private string _firstName;
         public string FirstName { get => _firstName; set => SetProperty(ref _firstName, value); }
@@ -39,9 +37,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
         private bool _privacyAccepted;
         public bool PrivacyAccepted { get => _privacyAccepted; set => SetProperty(ref _privacyAccepted, value); }
 
-        // IsBusy i IsNotBusy pochodzą z BaseViewModel lub muszą być tu zaimplementowane
-
-        // --- Komenda Rejestracji ---
+      
         public ICommand RegisterCommand { get; }
 
         public RegisterViewModel(/* IUserService userService */)
@@ -73,9 +69,9 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
             return !IsBusy
                    && !string.IsNullOrWhiteSpace(FirstName)
                    && !string.IsNullOrWhiteSpace(LastName)
-                   && !string.IsNullOrWhiteSpace(Email) // TODO: Można dodać walidację formatu Email
+                   && !string.IsNullOrWhiteSpace(Email) 
                    && !string.IsNullOrWhiteSpace(Password)
-                   && Password == ConfirmPassword // Sprawdzenie zgodności haseł
+                   && Password == ConfirmPassword 
                    && TermsAccepted
                    && PrivacyAccepted;
         }
@@ -91,13 +87,13 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
             }
 
             IsBusy = true;
-            OnPropertyChanged(nameof(IsNotBusy)); // Powiadom UI
+            OnPropertyChanged(nameof(IsNotBusy)); 
 
             try
             {
                 // Stwórz obiekt DTO wejściowego na podstawie danych z ViewModelu
                 // Używamy klasy WYGENEROWANEJ przez narzędzie OpenAPI!
-                var newUserDto = new UserCreateDto // Upewnij się, że to typ z namespace ApiClient
+                var newUserDto = new UserCreateDto 
                 {
                     FirstName = this.FirstName,
                     LastName = this.LastName,

@@ -7,6 +7,6 @@ namespace MedicalAppointmentApp.Services.Abstract
     public interface IAddressService : IDataStore<AddressForView>
     {
         Task<AddressForView> CreateAddressAsync(AddressCreateDto createDto);
-        Task UpdateAddressAsync(int id, AddressCreateDto updateDto); // Zwraca Task
+        Task UpdateAddressAsync(int id, AddressCreateDto updateDto);
     }
 }

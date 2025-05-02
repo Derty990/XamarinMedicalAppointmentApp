@@ -1,12 +1,12 @@
 ﻿using MedicalAppointmentApp.WebApi.Models;
 using MedicalAppointmentApp.WebApi.Helpers;
-using System.ComponentModel.DataAnnotations; // Dla [Key], jeśli chcesz go tu widzieć
+using System.ComponentModel.DataAnnotations; 
 
 namespace MedicalAppointmentApp.WebApi.ForView
 {
     public class AddressForView
     {
-        [Key] // Klucz jest często przydatny dla klienta
+        [Key] 
         public int AddressId { get; set; }
         public string Street { get; set; }
         public string City { get; set; }

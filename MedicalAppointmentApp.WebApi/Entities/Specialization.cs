@@ -1,8 +1,7 @@
-﻿// Plik: Models/Specialization.cs
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Potrzebne dla atrybutu [Table]
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; 
 
-namespace MedicalAppointmentApp.WebApi.Models // Zmień na przestrzeń nazw Twojego projektu
+namespace MedicalAppointmentApp.WebApi.Models
 {
     [Table("Specializations")] // Mapuje tę klasę na tabelę "Specializations" w bazie danych
     public class Specialization

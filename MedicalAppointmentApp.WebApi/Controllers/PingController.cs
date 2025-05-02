@@ -1,8 +1,7 @@
-﻿// W Web API - Controllers/PingController.cs
-using Microsoft.AspNetCore.Mvc;
-using System; // Potrzebne dla Console.WriteLine
+﻿using Microsoft.AspNetCore.Mvc;
 
-[Route("api/[controller]")] // Trasa: /api/ping
+
+[Route("api/[controller]")] 
 [ApiController]
 public class PingController : ControllerBase
 {

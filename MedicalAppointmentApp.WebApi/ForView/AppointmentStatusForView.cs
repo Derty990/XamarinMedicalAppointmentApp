@@ -1,5 +1,4 @@
-﻿
-using MedicalAppointmentApp.WebApi.Models;
+﻿using MedicalAppointmentApp.WebApi.Models;
 using MedicalAppointmentApp.WebApi.Helpers;
 using System.ComponentModel.DataAnnotations;
 

@@ -6,8 +6,8 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
 {
     public abstract class AListDataStore<T> : IDataStore<T> where T : class
     {
-        protected List<T> items; // Prosty cache
-        protected bool isInitialized = false; // Czy cache został zainicjowany?
+        protected List<T> items; 
+        protected bool isInitialized = false;
 
         // Abstrakcyjne metody - komunikacja z API - implementowane w klasach dziedziczących
         // Zwracają teraz bardziej użyteczne typy
@@ -17,11 +17,11 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
         protected abstract Task<List<T>> GetItemsFromService(); // Zwraca listę lub null/pustą listę
         protected abstract Task<T> GetItemFromService(int id); // Zwraca item lub null
 
-        // Abstrakcyjne metody Find - operują na cache 'items'
+       
         public abstract T Find(int id);
         // Można dodać więcej metod Find, jeśli potrzebne
 
-        // Inicjalizacja cache'u (może być wywołana z konstruktora klasy dziedziczącej lub leniwie)
+       
         protected virtual async Task InitializeAsync()
         {
             if (isInitialized)
@@ -31,7 +31,7 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
             isInitialized = true;
         }
 
-        // Publiczne metody interfejsu - operują na cache i wywołują metody ...ToService
+       
         // BEZ BLOKÓW TRY-CATCH - wyjątki polecą do ViewModelu
 
         public async Task<bool> AddItemAsync(T item)
@@ -39,8 +39,8 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
             T addedItem = await AddItemToService(item); // Wywołanie metody z API
             if (addedItem != null)
             {
-                await InitializeAsync(); // Upewnij się, że cache jest zainicjowany
-                items?.Add(addedItem); // Dodaj do cache
+                await InitializeAsync();
+                items?.Add(addedItem);
                 return true;
             }
             return false;
@@ -48,12 +48,11 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
 
         public async Task<bool> UpdateItemAsync(T item)
         {
-            bool success = await UpdateItemInService(item); // Wywołanie metody z API
+            bool success = await UpdateItemInService(item);
             if (success)
             {
-                // Odświeżamy cały cache - proste, ale mniej wydajne
-                // Lepsze byłoby znalezienie i podmiana elementu w `items`
-                isInitialized = false; // Oznacz cache jako nieaktualny
+              
+                isInitialized = false; 
                 await GetItemsAsync(true); // Wymuś odświeżenie przy następnym pobraniu listy
             }
             return success;
@@ -61,9 +60,8 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
 
         public virtual async Task<bool> DeleteItemAsync(int id)
         {
-            // Najpierw znajdź w cache, żeby mieć pewność, że istniał (opcjonalne)
-            // T itemToDelete = Find(id);
-            // if (itemToDelete == null) return false; // Lub rzuć wyjątek?
+          
+           
 
             bool success = await DeleteItemFromService(id); // Wywołanie metody z API
             if (success)
@@ -77,16 +75,15 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
 
         public async Task<T> GetItemAsync(int id)
         {
-            await InitializeAsync(); // Upewnij się, że cache jest załadowany
-            T item = Find(id); // Szukaj w cache
+            await InitializeAsync();
+            T item = Find(id); 
             if (item == null)
             {
-                // Jeśli nie ma w cache, spróbuj pobrać z API
+               
                 item = await GetItemFromService(id);
-                // Można dodać do cache, jeśli znaleziono i cache istnieje
-                // if (item != null && items != null) items.Add(item);
+               
             }
-            return item; // Może zwrócić null, jeśli nie ma ani w cache, ani w API
+            return item; 
         }
 
         public async Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false)

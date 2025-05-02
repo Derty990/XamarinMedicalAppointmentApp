@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace MedicalAppointmentApp.Services.Abstract
 {
-    public interface IAppointmentService : IDataStore<AppointmentForView> // T to WYGENEROWANY AppointmentForView
+    public interface IAppointmentService : IDataStore<AppointmentForView> 
     {
-        Task<AppointmentForView> CreateAppointmentAsync(AppointmentCreateDto createDto); // Używa WYGENEROWANYCH DTO
-        Task UpdateAppointmentAsync(int id, AppointmentUpdateDto updateDto); // Zwraca Task
+        Task<AppointmentForView> CreateAppointmentAsync(AppointmentCreateDto createDto); 
+        Task UpdateAppointmentAsync(int id, AppointmentUpdateDto updateDto);
     }
 }

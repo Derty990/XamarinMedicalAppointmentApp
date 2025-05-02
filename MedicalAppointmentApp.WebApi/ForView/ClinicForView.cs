@@ -28,7 +28,7 @@ namespace MedicalAppointmentApp.WebApi.ForView
             var forView = new ClinicForView().CopyProperties(clinic);
 
             // Ręcznie skopiuj dane z zagnieżdżonego adresu
-            // WAŻNE: To zadziała tylko, jeśli w kontrolerze załadowałeś powiązany Address przez .Include()!
+            // WAŻNE: To zadziała tylko, jeśli w kontrolerze załadowano powiązany Address przez .Include()!
             if (clinic.Address != null)
             {
                 forView.Street = clinic.Address.Street;

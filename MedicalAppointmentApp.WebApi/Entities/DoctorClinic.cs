@@ -1,13 +1,12 @@
-﻿// Plik: Models/DoctorClinic.cs
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
+namespace MedicalAppointmentApp.WebApi.Models
 {
     [Table("DoctorClinics")]
     public class DoctorClinic
     {
-        [Key] // Używamy klucza głównego surrogate
+        [Key] // Używamy klucza głównego
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DoctorClinicId { get; set; }
 

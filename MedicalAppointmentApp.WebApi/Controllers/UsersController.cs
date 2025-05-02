@@ -1,8 +1,8 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Do odpowiedzi
-using MedicalAppointmentApp.WebApi.Dtos;    // Do przyjmowania danych (Create/Update)
-using MedicalAppointmentApp.WebApi.Helpers; // Dla CopyProperties
+using MedicalAppointmentApp.WebApi.ForView;
+using MedicalAppointmentApp.WebApi.Dtos;   
+using MedicalAppointmentApp.WebApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using BCrypt.Net; // Using dla BCrypt
+using BCrypt.Net;
 
 namespace MedicalAppointmentApp.WebApi.Controllers
 {
@@ -40,7 +40,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
-            UserForView forView = user; // Użycie operatora
+            UserForView forView = user; 
             return Ok(forView);
         }
 
@@ -69,7 +69,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
             _context.Users.Add(user);
 
-            // Uproszczony try-catch
+          
             try { await _context.SaveChangesAsync(); }
             catch (DbUpdateException ex)
             {
@@ -77,7 +77,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
                 return Conflict("Database error creating user. Email might already exist or address ID is invalid.");
             }
 
-            UserForView createdForView = user; // Konwersja zapisanej encji na ForView
+            UserForView createdForView = user; 
             return Ok(createdForView);
         }
 
@@ -112,7 +112,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Users/5 - Bez zmian
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

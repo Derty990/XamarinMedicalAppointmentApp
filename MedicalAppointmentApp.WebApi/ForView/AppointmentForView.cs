@@ -31,7 +31,7 @@ namespace MedicalAppointmentApp.WebApi.ForView
             var forView = new AppointmentForView().CopyProperties(app);
 
             // Potem ręcznie wypełnij spłaszczone dane
-            // WAŻNE: To zadziała tylko, jeśli w kontrolerze załadowałeś powiązane encje przez .Include()!
+            // WAŻNE: To zadziała tylko, jeśli w kontrolerze załadowano powiązane encje przez .Include()!
             forView.PatientFullName = $"{app.Patient?.FirstName} {app.Patient?.LastName}".Trim();
             forView.DoctorFullName = $"{app.Doctor?.User?.FirstName} {app.Doctor?.User?.LastName}".Trim(); // Zagnieżdżenie User->Doctor
             forView.ClinicName = app.Clinic?.Name;

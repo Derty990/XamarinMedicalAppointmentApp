@@ -1,6 +1,6 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
+using MedicalAppointmentApp.WebApi.ForView; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using MedicalAppointmentApp.WebApi.Helpers; // Dla Console.WriteLine
+using MedicalAppointmentApp.WebApi.Helpers;
 
 namespace MedicalAppointmentApp.WebApi.Controllers
 {
@@ -17,7 +17,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
     public class SpecializationsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        // Usunięto IMapper
+        
 
         public SpecializationsController(ApplicationDbContext context)
         {
@@ -29,7 +29,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         public async Task<ActionResult<IEnumerable<SpecializationForView>>> GetSpecializations()
         {
             var specializations = await _context.Specializations.ToListAsync();
-            // Używamy operatora konwersji (zakładamy, że jest zdefiniowany w SpecializationForView)
+         
             var specializationsForView = specializations.Select(s => (SpecializationForView)s).ToList();
             return Ok(specializationsForView);
         }
@@ -45,7 +45,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
                 return NotFound();
             }
 
-            SpecializationForView specializationForView = specialization; // Użycie operatora konwersji
+            SpecializationForView specializationForView = specialization; 
             return Ok(specializationForView);
         }
 
@@ -53,15 +53,14 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<SpecializationForView>> PostSpecialization(SpecializationForView specializationForView)
         {
-            // Używamy operatora konwersji ForView -> Encja (jeśli zdefiniowany)
-            // lub mapujemy ręcznie/CopyProperties
-            Specialization specialization = specializationForView; // Zakłada operator w SpecializationForView lub Encji
+          
+            Specialization specialization = specializationForView; 
             if (specialization == null)
             {
                 // Jeśli konwersja zawiedzie lub DTO jest puste
                 return BadRequest("Invalid input data.");
             }
-            // Wyzeruj ID, aby baza nadała nowe (jeśli klucz to Identity)
+           
             specialization.SpecializationId = 0;
 
             _context.Specializations.Add(specialization);
@@ -70,7 +69,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa
+            catch (DbUpdateException ex) 
             {
                 Console.WriteLine($"DbUpdateException creating specialization: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict("Database error creating specialization. Name might already exist.");
@@ -84,17 +83,15 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSpecialization(int id, SpecializationForView specializationForView)
         {
-            // Znajdź istniejącą encję
+           
             var specializationToUpdate = await _context.Specializations.FindAsync(id);
             if (specializationToUpdate == null)
             {
                 return NotFound();
             }
 
-            // Użyj CopyProperties z helpera do zaktualizowania pól (bezpieczniejsze niż operator)
-            specializationToUpdate.CopyProperties(specializationForView); // Kopiuje tylko pasujące właściwości
-
-            // _context.Entry(specializationToUpdate).State = EntityState.Modified; // EF Core powinien sam wykryć zmiany
+           
+            specializationToUpdate.CopyProperties(specializationForView);
 
             try
             {
@@ -124,7 +121,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             }
 
             _context.Specializations.Remove(specialization);
-            await _context.SaveChangesAsync(); // Uproszczona obsługa błędów (ewentualny błąd da 500)
+            await _context.SaveChangesAsync(); 
 
             return NoContent();
         }

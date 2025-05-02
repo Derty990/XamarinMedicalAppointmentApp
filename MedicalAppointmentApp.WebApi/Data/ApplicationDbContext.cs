@@ -1,22 +1,19 @@
-﻿// Plik: Data/ApplicationDbContext.cs (Zmodyfikowany z Twojego MedicalDbContext)
-using MedicalAppointmentApp.WebApi.Models; // Użyj namespace Twoich modeli
+﻿using MedicalAppointmentApp.WebApi.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MedicalAppointmentApp.WebApi.Data // Zmień namespace, jeśli trzeba
+namespace MedicalAppointmentApp.WebApi.Data 
 {
-    // Zmieniono nazwę klasy z MedicalDbContext na ApplicationDbContext
+   
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
-        // --- DbSet dla każdej encji w nowym schemacie ---
-        // NOWE TABELE:
+       
         public DbSet<Address> Addresses { get; set; }
         public DbSet<AppointmentStatus> AppointmentStatuses { get; set; }
 
-        // TABELE, KTÓRE POZOSTAŁY (mogą wymagać aktualizacji modeli):
         public DbSet<User> Users { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Clinic> Clinics { get; set; }
@@ -24,7 +21,6 @@ namespace MedicalAppointmentApp.WebApi.Data // Zmień namespace, jeśli trzeba
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<DoctorClinic> DoctorClinics { get; set; } // Tabela łącząca
 
-        // Metoda do dodatkowej konfiguracji (Fluent API)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -104,7 +100,7 @@ namespace MedicalAppointmentApp.WebApi.Data // Zmień namespace, jeśli trzeba
                .Property(a => a.AppointmentDate)
                .HasColumnType("date");
 
-            // Możesz tu dodać więcej konfiguracji Fluent API w miarę potrzeb
+            // Można tu dodać więcej konfiguracji Fluent API w miarę potrzeb
             // np. precyzję dla typów decimal, wartości domyślne, etc.
         }
     }

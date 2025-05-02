@@ -1,8 +1,8 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
-using MedicalAppointmentApp.WebApi.Dtos;    // Używamy CreateDto
-using MedicalAppointmentApp.WebApi.Helpers; // Używamy PropertyUtil
+using MedicalAppointmentApp.WebApi.ForView; 
+using MedicalAppointmentApp.WebApi.Dtos;    
+using MedicalAppointmentApp.WebApi.Helpers; 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -97,9 +97,6 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         {
             var address = await _context.Addresses.FindAsync(id);
             if (address == null) return NotFound();
-
-            // Sprawdzenie czy adres jest używany (uproszczone, polegamy na błędzie FK z bazy)
-            // Można dodać jawne sprawdzenie jak wcześniej, jeśli chcemy lepszy komunikat
 
             _context.Addresses.Remove(address);
 

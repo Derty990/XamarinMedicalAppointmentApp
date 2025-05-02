@@ -1,7 +1,7 @@
 ﻿using MedicalAppointmentApp.WebApi.Data;
 using MedicalAppointmentApp.WebApi.Models;
-using MedicalAppointmentApp.WebApi.ForView; // Używamy ForView
-using MedicalAppointmentApp.WebApi.Dtos;    // Używamy CreateDto
+using MedicalAppointmentApp.WebApi.ForView; 
+using MedicalAppointmentApp.WebApi.Dtos;    
 using MedicalAppointmentApp.WebApi.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,7 +55,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Clinics
         [HttpPost]
-        public async Task<ActionResult<ClinicForView>> PostClinic(ClinicCreateDto clinicCreateDto) // Przyjmuje CreateDto
+        public async Task<ActionResult<ClinicForView>> PostClinic(ClinicCreateDto clinicCreateDto) 
         {
             // Sprawdź czy AddressId istnieje
             if (!await _context.Addresses.AnyAsync(a => a.AddressId == clinicCreateDto.AddressId))
@@ -72,7 +72,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa błędów FK
+            catch (DbUpdateException ex)
             {
                 Console.WriteLine($"DbUpdateException creating clinic: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict("Database error creating clinic. The specified Address ID might be invalid.");
@@ -137,7 +137,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateException ex) // Uproszczona obsługa błędów FK
+            catch (DbUpdateException ex) 
             {
                 Console.WriteLine($"DbUpdateException deleting clinic {id}: {ex.InnerException?.Message ?? ex.Message}");
                 return Conflict($"Cannot delete Clinic ID {id} because it might be referenced by Doctors or Appointments.");

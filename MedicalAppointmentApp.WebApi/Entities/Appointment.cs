@@ -1,9 +1,8 @@
-﻿// Plik: Models/Appointment.cs
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
+namespace MedicalAppointmentApp.WebApi.Models 
 {
     [Table("Appointments")]
     public class Appointment
@@ -36,7 +35,7 @@ namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
         [Required]
         public int StatusId { get; set; } // Klucz obcy do AppointmentStatuses
 
-        // Usunięto: Notes, CreatedDate
+       
 
         // --- Właściwości Nawigacyjne ---
 

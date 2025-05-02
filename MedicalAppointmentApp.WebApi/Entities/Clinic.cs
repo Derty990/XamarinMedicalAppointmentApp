@@ -1,9 +1,8 @@
-﻿// Plik: Models/Clinic.cs
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic; // Potrzebne dla ICollection
+using System.Collections.Generic; 
 
-namespace MedicalAppointmentApp.WebApi.Models // Zmień namespace
+namespace MedicalAppointmentApp.WebApi.Models 
 {
     [Table("Clinics")]
     public class Clinic

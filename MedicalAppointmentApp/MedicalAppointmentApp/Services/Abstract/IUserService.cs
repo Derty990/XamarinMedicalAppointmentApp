@@ -6,7 +6,8 @@ namespace MedicalAppointmentApp.Services.Abstract
 {
     public interface IUserService : IDataStore<UserForView> 
     {
-        Task<UserForView> RegisterUserAsync(UserCreateDto createDto); 
+        Task<UserForView> RegisterUserAsync(UserCreateDto createDto);
+        Task<UserForView> LoginUserAsync(string email, string password);
         Task UpdateUserAsync(int id, UserUpdateDto updateDto); 
     }
 }

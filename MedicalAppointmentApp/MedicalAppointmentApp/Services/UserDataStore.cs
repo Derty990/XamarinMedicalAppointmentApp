@@ -86,5 +86,28 @@ public class UserDataStore : AListDataStore<UserForView>, IUserService
         
         await _apiClient.UsersPUTAsync(id, updateDto);
     }
+
+    public async Task<UserForView> LoginUserAsync(string email, string password)
+    {
+        var loginDto = new UserLoginDto { Email = email, Password = password };
+        try
+        {
+           
+            UserForView loggedInUser = await _apiClient.LoginAsync(loginDto); 
+                                                                              
+            return loggedInUser; 
+        }
+        catch (ApiException ex) when (ex.StatusCode == 401 || ex.StatusCode == 404 || ex.StatusCode == 400)
+        {
+            Debug.WriteLine($"[UserDataStore] Login Failed: Status {ex.StatusCode}, Response: {ex.Response}");
+            return null; // Błąd logowania
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[UserDataStore] LoginUserAsync Unexpected Error: {ex.Message}");
+            
+            throw new Exception("Exception in LoginUserAsync");
+        }
+    }
 }
 

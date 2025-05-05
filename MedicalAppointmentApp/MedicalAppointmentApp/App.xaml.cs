@@ -21,11 +21,11 @@ namespace MedicalAppointmentApp
 
             var httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:5268") 
-               
+                BaseAddress = new Uri("http://localhost:5268")
+
             };
-           
-            ApiClient = new MedicalApiClient("http://localhost:5268", httpClient); 
+
+            ApiClient = new MedicalApiClient("http://localhost:5268", httpClient);
 
             DependencyService.RegisterSingleton<MedicalApiClient>(ApiClient);
             DependencyService.Register<IUserService, UserDataStore>();
@@ -36,7 +36,12 @@ namespace MedicalAppointmentApp
             DependencyService.Register<ISpecializationService, SpecializationDataStore>();
             DependencyService.Register<IAppointmentStatusService, AppointmentStatusDataStore>();
 
-            MainPage = new NavigationPage(new LoginPage());
+            var loginPage = new LoginPage();
+
+            var navPage = new NavigationPage(loginPage);
+
+            MainPage = navPage;
+
         }
 
         protected override void OnStart()

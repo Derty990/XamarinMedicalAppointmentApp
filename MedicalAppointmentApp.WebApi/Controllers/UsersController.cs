@@ -81,6 +81,36 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             return Ok(createdForView);
         }
 
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserForView))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Dla brakujących danych
+        public async Task<ActionResult<UserForView>> LoginUser([FromBody] UserLoginDto loginDto)
+        {
+           
+            if (loginDto == null || string.IsNullOrWhiteSpace(loginDto.Email) || string.IsNullOrWhiteSpace(loginDto.Password))
+            {
+                return BadRequest("Email and password are required.");
+            }
+
+            // 1. Znajdź użytkownika po emailu
+            var user = await _context.Users
+                                     .FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+
+            // 2. Sprawdź, czy użytkownik istnieje i czy hasło pasuje (używając BCrypt.Verify)
+            //    Sprawdzamy obie rzeczy naraz. Jeśli user jest null LUB Verify zwróci false -> błąd.
+            //    Zakładamy, że user.PasswordHash nie będzie null/pusty dla istniejącego użytkownika.
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+            {
+                // Dane logowania są niepoprawne (nie mówimy co dokładnie)
+                return Unauthorized("Invalid credentials.");
+            }
+
+            // 3. Logowanie udane - Zwróć dane użytkownika
+            UserForView userForView = user; 
+            return Ok(userForView);
+        }
+
         // PUT: api/Users/5 - Przyjmuje UserUpdateDto
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserUpdateDto userUpdateDto)

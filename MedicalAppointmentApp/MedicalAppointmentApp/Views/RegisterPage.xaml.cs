@@ -17,7 +17,6 @@ namespace MedicalAppointmentApp.Views
             
         }
 
-       
         async void OnLoginTapped(object sender, EventArgs e)
         {
             await Navigation.PopAsync();

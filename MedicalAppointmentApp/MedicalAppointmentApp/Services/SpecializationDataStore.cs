@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-
 namespace MedicalAppointmentApp.XamarinApp.Services 
 {
   
@@ -32,23 +31,19 @@ namespace MedicalAppointmentApp.XamarinApp.Services
           
         }
 
-       
         protected override Task<SpecializationForView> GetItemFromService(int id)
         {
            
             return _apiClient.SpecializationsGETAsync(id);
            
         }
-
-       
-        
+ 
         protected override Task<SpecializationForView> AddItemToService(SpecializationForView item)
         {
             return _apiClient.SpecializationsPOSTAsync(item);
           
         }
 
-     
         protected override Task<bool> UpdateItemInService(SpecializationForView item)
         {
           
@@ -62,14 +57,12 @@ namespace MedicalAppointmentApp.XamarinApp.Services
             return CallApiAndReturnBool(async () => await _apiClient.SpecializationsDELETEAsync(id));
         }
 
-     
         public override SpecializationForView Find(int id)
         {
           
             return items?.FirstOrDefault(s => s.SpecializationId == id);
         }
 
-     
         private async Task<bool> CallApiAndReturnBool(Func<Task> apiCall)
         {
             await apiCall(); 

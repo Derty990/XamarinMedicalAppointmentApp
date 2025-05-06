@@ -12,7 +12,7 @@ namespace MedicalAppointmentApp.Views
     {
         public MainFlyoutPage()
         {
-            InitializeComponent(); // Keep this
+            InitializeComponent(); 
 
             // Create the menu page instance
             var menuPage = new MenuPage();
@@ -28,11 +28,9 @@ namespace MedicalAppointmentApp.Views
             // so it can change the Detail page and hide itself
             menuPage.ParentFlyoutPage = this;
 
-            // Optional: Set behavior for when the flyout closes on item tap (default is usually fine)
-            // FlyoutLayoutBehavior = FlyoutLayoutBehavior.Popover;
+            
         }
 
-        // Note: The logic for changing the Detail page is now inside MenuPage.xaml.cs
-        // based on the ParentFlyoutPage reference.
+       
     }
 }

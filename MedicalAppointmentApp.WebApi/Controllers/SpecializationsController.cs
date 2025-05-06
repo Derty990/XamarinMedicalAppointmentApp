@@ -26,6 +26,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Specializations
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<SpecializationForView>))] 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<SpecializationForView>>> GetSpecializations()
         {
             var specializations = await _context.Specializations.ToListAsync();
@@ -51,6 +53,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Specializations
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(SpecializationForView))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<SpecializationForView>> PostSpecialization(SpecializationForView specializationForView)
         {
           
@@ -80,6 +85,10 @@ namespace MedicalAppointmentApp.WebApi.Controllers
         }
 
         // PUT: api/Specializations/5
+        [ProducesResponseType(StatusCodes.Status204NoContent)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSpecialization(int id, SpecializationForView specializationForView)
         {
@@ -112,6 +121,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // DELETE: api/Specializations/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteSpecialization(int id)
         {
             var specialization = await _context.Specializations.FindAsync(id);

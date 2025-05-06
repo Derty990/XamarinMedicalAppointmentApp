@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" x:Class="MedicalAppointmentApp.Views.AddDoctorPage"
+             Title="{Binding Title}">
+
+    <StackLayout Padding="20" Spacing="15">
+        <Label Text="Wybierz Użytkownika:" FontSize="Medium"/>
+        <Picker ItemsSource="{Binding UserDisplayNames}"
+        SelectedIndex="{Binding SelectedUserIndex}"
+        Title="-- Wybierz Użytkownika --" />
+        <Label Text="Wybierz Specjalizację:" FontSize="Medium" Margin="0,10,0,0"/>
+        <Picker ItemsSource="{Binding SpecializationNames}"
+        SelectedIndex="{Binding SelectedSpecializationIndex}"
+        Title="-- Wybierz Specjalizację --" />
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" Margin="0,10,0,0"/>
+
+        <Button Text="Zapisz Lekarza"
+        Command="{Binding SaveDoctorCommand}"
+        BackgroundColor="#3498db"
+        TextColor="White"
+        CornerRadius="20"
+        HeightRequest="50"
+        Margin="0,20,0,0"
+        IsEnabled="{Binding IsNotBusy}"/>
+
+    </StackLayout>
+
+</ContentPage>

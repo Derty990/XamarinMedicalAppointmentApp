@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" xmlns:model="clr-namespace:MedicalAppointmentApp.XamarinApp.ApiClient" x:Class="MedicalAppointmentApp.Views.DoctorsPage"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Command="{Binding AddDoctorCommand}" />
+    </ContentPage.ToolbarItems>
+    
+    <StackLayout>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
+
+        <CollectionView ItemsSource="{Binding Doctors}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedDoctor, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding DoctorSelectedCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:DoctorListItemDto">
+                    <Grid Padding="10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.Column="0">
+                            <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="Medium"/>
+                            <Label Text="{Binding SpecializationName}" FontSize="Small" TextColor="Gray"/>
+                        </StackLayout>
+                        <Label Grid.Column="1" Text=">" FontSize="Medium" VerticalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Brak dostępnych lekarzy." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                    <Button Text="Odśwież" Command="{Binding LoadDoctorsCommand}" Margin="0,10,0,0"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <Button Text="Odśwież Listę" Command="{Binding LoadDoctorsCommand}" Margin="10"/>
+
+    </StackLayout>
+</ContentPage>

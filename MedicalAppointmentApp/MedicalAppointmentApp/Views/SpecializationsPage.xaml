@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" xmlns:model="clr-namespace:MedicalAppointmentApp.XamarinApp.ApiClient" x:Class="MedicalAppointmentApp.Views.SpecializationsPage"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Dodaj" Command="{Binding AddSpecializationCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
+
+        <CollectionView ItemsSource="{Binding Specializations}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedSpecialization, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding EditSpecializationCommand}" SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:SpecializationForView">
+                    <StackLayout Padding="15,10">
+                        <Label Text="{Binding Name}" FontSize="Medium"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Brak zdefiniowanych specjalizacji." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                    <Button Text="Odśwież" Command="{Binding LoadSpecializationsCommand}" Margin="0,10,0,0"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <Button Text="Odśwież Listę" Command="{Binding LoadSpecializationsCommand}" Margin="10"/>
+    </StackLayout>
+
+</ContentPage>

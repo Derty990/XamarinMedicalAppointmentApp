@@ -1,5 +1,6 @@
 ﻿using MedicalAppointmentApp.Views; // Upewnij się, że ten using jest poprawny dla Twoich stron
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -70,9 +71,9 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                 switch (routeName)
                 {
                     // Odkomentuj, gdy stworzysz odpowiednie strony:
-                    // case nameof(DoctorsPage):
-                    //     pageToNavigate = new DoctorsPage();
-                    //     break;
+                     case nameof(DoctorsPage):
+                         pageToNavigate = new DoctorsPage();
+                         break;
                     // case nameof(AppointmentBookingPage):
                     //     pageToNavigate = new AppointmentBookingPage();
                     //     break;
@@ -94,7 +95,17 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     IsBusy = true;
                     (NavigateCommand as Command)?.ChangeCanExecute();
 
-                    await Application.Current.MainPage.Navigation.PushAsync(pageToNavigate);
+                    
+                    if (Application.Current.MainPage is FlyoutPage flyoutPage && flyoutPage.Detail is NavigationPage navigationPage)
+                    {
+                        await navigationPage.Navigation.PushAsync(pageToNavigate);
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Error: MainPage is not FlyoutPage or Detail is not NavigationPage");
+                        await Application.Current.MainPage.DisplayAlert("Błąd", "Wystąpił wewnętrzny błąd nawigacji.", "OK");
+                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -119,8 +130,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
             LoadWelcomeData();
             // TODO: Dodaj odświeżanie innych danych, np. listy wizyt
         }
-
-        // Poprawne przesłonięcie OnPropertyChanged do aktualizacji CanExecute
+       
         protected override void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
         {
             base.OnPropertyChanged(propertyName);

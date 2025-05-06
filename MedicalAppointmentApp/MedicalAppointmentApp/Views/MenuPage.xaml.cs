@@ -23,7 +23,8 @@ namespace MedicalAppointmentApp.Views
             {
                 // Add items linking Title to the Page Type you want to navigate to
                 new FlyoutMenuItem { Id = 0, Title = "Dashboard", TargetType = typeof(DashboardPage) },
-                //new FlyoutMenuItem { Id = 1, Title = "Lekarze", TargetType = typeof(DoctorsPage) },
+                new FlyoutMenuItem { Id = 1, Title = "Lekarze", TargetType = typeof(DoctorsPage) },
+                 new FlyoutMenuItem { Id = 2, Title = "Specjalizacje", TargetType = typeof(SpecializationsPage) }, // Użyj następnego wolnego ID
                 //new FlyoutMenuItem { Id = 2, Title = "Umów wizytę", TargetType = typeof(AppointmentBookingPage) },
                 //new FlyoutMenuItem { Id = 3, Title = "Moje wizyty", TargetType = typeof(MyAppointmentsPage) },
                 //new FlyoutMenuItem { Id = 4, Title = "Profil", TargetType = typeof(ProfilePage) }

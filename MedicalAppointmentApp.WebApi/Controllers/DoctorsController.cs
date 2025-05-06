@@ -59,6 +59,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Doctors - Przyjmuje DoctorCreateDto, zwraca DoctorForView
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DoctorForView))] // Deklarujemy 201
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<DoctorForView>> PostDoctor(DoctorCreateDto doctorCreateDto)
         {
             
@@ -94,37 +97,29 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // PUT: api/Doctors/5 - Przyjmuje DoctorUpdateDto (tylko SpecializationId)
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] // Sukces
+        [ProducesResponseType(StatusCodes.Status400BadRequest)] // Błąd walidacji
+        [ProducesResponseType(StatusCodes.Status404NotFound)] // Nie znaleziono lekarza
         public async Task<IActionResult> PutDoctor(int id, DoctorUpdateDto doctorUpdateDto)
         {
             var doctorToUpdate = await _context.Doctors.FindAsync(id);
             if (doctorToUpdate == null) return NotFound();
 
-            // Walidacja
+           
             if (doctorToUpdate.SpecializationId != doctorUpdateDto.SpecializationId &&
                 !await _context.Specializations.AnyAsync(s => s.SpecializationId == doctorUpdateDto.SpecializationId))
             {
                 return BadRequest($"Invalid SpecializationId: Specialization {doctorUpdateDto.SpecializationId} not found.");
             }
 
-            // Ręczna aktualizacja pola, bo DTO ma tylko jedno pole
             doctorToUpdate.SpecializationId = doctorUpdateDto.SpecializationId;
 
-           
-            try { await _context.SaveChangesAsync(); }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await DoctorExists(id)) { return NotFound(); } else { throw; }
-            }
-            catch (DbUpdateException ex)
-            {
-                Console.WriteLine($"DbUpdateException updating doctor {id}: {ex.InnerException?.Message ?? ex.Message}");
-                return Conflict("Database error updating doctor. Specialization ID might be invalid.");
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent(); 
         }
 
-        // DELETE: api/Doctors/5 - Bez zmian
+        // DELETE: api/Doctors/5 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {

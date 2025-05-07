@@ -25,6 +25,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/AppointmentStatuses
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AppointmentStatusForView>))]
         public async Task<ActionResult<IEnumerable<AppointmentStatusForView>>> GetAppointmentStatuses()
         {
             var statuses = await _context.AppointmentStatuses.ToListAsync();
@@ -33,6 +34,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/AppointmentStatuses/5
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AppointmentStatusForView))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AppointmentStatusForView>> GetAppointmentStatus(int id)
         {
             var status = await _context.AppointmentStatuses.FindAsync(id);
@@ -41,8 +44,11 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             return Ok(forView);
         }
 
-        // POST: api/AppointmentStatuses - Rzadko używane
+        // POST: api/AppointmentStatuses
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AppointmentStatusForView))] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<AppointmentStatusForView>> PostAppointmentStatus(AppointmentStatusForView statusForView)
         {
             AppointmentStatus status = statusForView; 
@@ -64,8 +70,12 @@ namespace MedicalAppointmentApp.WebApi.Controllers
             return CreatedAtAction(nameof(GetAppointmentStatus), new { id = status.StatusId }, createdForView);
         }
 
-        // PUT: api/AppointmentStatuses/5 - Rzadko używane
+        // PUT: api/AppointmentStatuses/5
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutAppointmentStatus(int id, AppointmentStatusForView statusForView)
         {
             var statusToUpdate = await _context.AppointmentStatuses.FindAsync(id);
@@ -92,6 +102,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // DELETE: api/AppointmentStatuses/5 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] 
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)] 
         public async Task<IActionResult> DeleteAppointmentStatus(int id)
         {
             var status = await _context.AppointmentStatuses.FindAsync(id);

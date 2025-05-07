@@ -4,9 +4,9 @@
              Title="{Binding Title}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddDoctorCommand}" />
+        <ToolbarItem Text="Dodaj" Command="{Binding AddDoctorCommand}" />
     </ContentPage.ToolbarItems>
-    
+
     <StackLayout>
         <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
 
@@ -40,6 +40,8 @@
         </CollectionView>
 
         <Button Text="Odśwież Listę" Command="{Binding LoadDoctorsCommand}" Margin="10"/>
+
+        
 
     </StackLayout>
 </ContentPage>

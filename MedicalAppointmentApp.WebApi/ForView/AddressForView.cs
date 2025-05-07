@@ -12,7 +12,6 @@ namespace MedicalAppointmentApp.WebApi.ForView
         public string City { get; set; }
         public string PostalCode { get; set; }
 
-        // --- Operatory Konwersji ---
         public static implicit operator AddressForView(Address address)
             => address == null ? null : new AddressForView().CopyProperties(address);
 

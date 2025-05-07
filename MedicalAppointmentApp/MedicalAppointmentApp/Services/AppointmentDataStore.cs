@@ -68,7 +68,7 @@ namespace MedicalAppointmentApp.XamarinApp.Services
         {
             try { await apiCall(); return true; }
             catch (ApiException ex) when (ex.StatusCode == 404) { return false; }
-            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"API call failed: {ex.Message}"); return false; }
+            catch (Exception ex) { Debug.WriteLine($"API call failed: {ex.Message}"); return false; }
         }
     }
 

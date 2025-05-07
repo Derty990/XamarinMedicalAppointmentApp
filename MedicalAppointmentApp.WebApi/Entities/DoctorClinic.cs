@@ -6,7 +6,7 @@ namespace MedicalAppointmentApp.WebApi.Models
     [Table("DoctorClinics")]
     public class DoctorClinic
     {
-        [Key] // Używamy klucza głównego
+        [Key] 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DoctorClinicId { get; set; }
 
@@ -16,7 +16,6 @@ namespace MedicalAppointmentApp.WebApi.Models
         [Required]
         public int ClinicId { get; set; }
 
-        // --- Właściwości Nawigacyjne ---
 
         [ForeignKey("DoctorId")]
         public virtual Doctor Doctor { get; set; }

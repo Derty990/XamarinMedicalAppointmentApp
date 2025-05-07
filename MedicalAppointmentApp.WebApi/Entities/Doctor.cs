@@ -11,17 +11,13 @@ namespace MedicalAppointmentApp.WebApi.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DoctorId { get; set; }
 
-        // Klucz obcy do tabeli Users (relacja jeden-do-jeden)
         [Required]
         public int UserId { get; set; }
 
-        // Klucz obcy do tabeli Specializations
         [Required]
         public int SpecializationId { get; set; }
 
         // Usunięto: LicenseNumber, PictureUrl
-
-        // --- Właściwości Nawigacyjne ---
 
         // Nawigacja do powiązanego użytkownika
         [ForeignKey("UserId")]

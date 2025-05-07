@@ -1,5 +1,5 @@
-﻿using MedicalAppointmentApp.Services.Abstract;      // Dla IClinicService, IAddressService
-using MedicalAppointmentApp.XamarinApp.ApiClient;  // Dla ClinicForView, AddressForView, ClinicCreateDto
+﻿using MedicalAppointmentApp.Services.Abstract;     
+using MedicalAppointmentApp.XamarinApp.ApiClient; 
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

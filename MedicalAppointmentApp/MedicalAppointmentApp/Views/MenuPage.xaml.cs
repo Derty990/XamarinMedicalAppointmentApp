@@ -27,10 +27,11 @@ namespace MedicalAppointmentApp.Views
                  new FlyoutMenuItem { Id = 2, Title = "Specjalizacje", TargetType = typeof(SpecializationsPage) },
                  new FlyoutMenuItem { Id = 3, Title = "Adresy", TargetType = typeof(AddressesPage) },
                  new FlyoutMenuItem { Id = 4, Title = "Kliniki", TargetType = typeof(ClinicsPage) },
-                 new FlyoutMenuItem { Id = 5, Title = "Mój Profil", TargetType = typeof(ProfilePage) }, 
+                 new FlyoutMenuItem { Id = 5, Title = "Mój Profil", TargetType = typeof(ProfilePage) },
+                 new FlyoutMenuItem { Id = 9, Title = "Statusy Wizyt", TargetType = typeof(AppointmentStatusesPage) },
                 //new FlyoutMenuItem { Id = 2, Title = "Umów wizytę", TargetType = typeof(AppointmentBookingPage) },
                 //new FlyoutMenuItem { Id = 3, Title = "Moje wizyty", TargetType = typeof(MyAppointmentsPage) },
-                //new FlyoutMenuItem { Id = 4, Title = "Profil", TargetType = typeof(ProfilePage) }
+                
                 
             };
 

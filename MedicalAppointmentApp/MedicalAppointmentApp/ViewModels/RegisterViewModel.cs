@@ -40,15 +40,13 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
       
         public ICommand RegisterCommand { get; }
 
-        public RegisterViewModel(/* IUserService userService */)
+        public RegisterViewModel()
         {
-            // Pobierz serwis przez DependencyService
+           
             _userService = DependencyService.Get<IUserService>();
-
             // Sprawdź JAWNIE, czy serwis został poprawnie pobrany
             if (_userService == null)
             {
-                // Rzuć wyjątkiem, bo to oznacza błąd konfiguracji DI
                 throw new InvalidOperationException($"Could not resolve {nameof(IUserService)}. Was it registered in App.xaml.cs?");
             }
 
@@ -120,7 +118,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     await Application.Current.MainPage.DisplayAlert("Błąd Rejestracji", "Nie udało się utworzyć konta. Sprawdź, czy podany email nie jest już zajęty lub spróbuj ponownie.", "OK");
                 }
             }
-            catch (Exception ex) // Złap nieoczekiwane błędy (np. sieciowe, jeśli DataStore ich nie złapał)
+            catch (Exception ex) 
             {
                 Debug.WriteLine($"[Register VM] Exception: {ex}");
                 await Application.Current.MainPage.DisplayAlert("Błąd Krytyczny", "Wystąpił nieoczekiwany błąd podczas rejestracji.", "OK");

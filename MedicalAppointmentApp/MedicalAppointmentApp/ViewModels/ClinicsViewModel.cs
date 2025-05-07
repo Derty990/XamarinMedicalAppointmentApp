@@ -56,7 +56,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     foreach (var item in items) { Clinics.Add(item); }
                 }
             }
-            catch (Exception ex) { Debug.WriteLine($"Błąd ładowania klinik: {ex.Message}"); /* Pokaż Alert */ }
+            catch (Exception ex) { Debug.WriteLine($"Błąd ładowania klinik: {ex.Message}"); }
             finally { IsBusy = false; }
         }
 

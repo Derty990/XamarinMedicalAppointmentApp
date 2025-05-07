@@ -22,17 +22,15 @@ namespace MedicalAppointmentApp.WebApi.Models
         [StringLength(100)]
         // [EmailAddress] // Można dodać walidację formatu email
         public string Email { get; set; }
-        // Uwaga: Ograniczenie UNIQUE dla Email najlepiej skonfigurować w DbContext (OnModelCreating) lub bezpośrednio w bazie
 
         [Required]
-        [StringLength(255)] // Dostosuj długość, jeśli wiesz, jaki będzie hash
+        [StringLength(255)] 
         public string PasswordHash { get; set; }
 
-        // Klucz obcy do tabeli Addresses - nullable (dlatego int?)
         public int? AddressId { get; set; }
 
         [Required]
-        public int RoleId { get; set; } // Będzie mapowane na Enum w logice aplikacji
+        public int RoleId { get; set; } 
 
         // --- Właściwości Nawigacyjne ---
 

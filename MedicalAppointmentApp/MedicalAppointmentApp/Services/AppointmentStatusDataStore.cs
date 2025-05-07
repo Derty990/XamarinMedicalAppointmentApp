@@ -1,56 +1,63 @@
-﻿// W Xamarin - Services/AppointmentStatusDataStore.cs
-using MedicalAppointmentApp.XamarinApp.Services.Abstract;
+﻿using MedicalAppointmentApp.XamarinApp.Services.Abstract;
 using MedicalAppointmentApp.XamarinApp.ApiClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading; 
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Diagnostics; 
 
-public class AppointmentStatusDataStore : AListDataStore<AppointmentStatusForView>, IAppointmentStatusService
+namespace MedicalAppointmentApp.XamarinApp.Services
 {
-    private readonly MedicalApiClient _apiClient;
-    public AppointmentStatusDataStore() { _apiClient = DependencyService.Get<MedicalApiClient>(); if (_apiClient == null) throw new InvalidOperationException($"{nameof(MedicalApiClient)} not registered."); }
+    public class AppointmentStatusDataStore : AListDataStore<AppointmentStatusForView>, IAppointmentStatusService
+    {
+        private readonly MedicalApiClient _apiClient;
 
-    protected override async Task<List<AppointmentStatusForView>> GetItemsFromService()
-    {
-       
-        ICollection<AppointmentStatusForView> result = await _apiClient.AppointmentStatusesAllAsync();
-        return result?.ToList() ?? new List<AppointmentStatusForView>();
-    }
+        public AppointmentStatusDataStore()
+        {
+            _apiClient = DependencyService.Get<MedicalApiClient>();
+            if (_apiClient == null) throw new InvalidOperationException($"{nameof(MedicalApiClient)} not registered.");
+        }
 
-    protected override Task<AppointmentStatusForView> GetItemFromService(int id)
-    {
-       
-        return _apiClient.AppointmentStatusesGETAsync(id);
-    }
-   
-    protected override Task<AppointmentStatusForView> AddItemToService(AppointmentStatusForView item)
-    {
-       
-        return _apiClient.AppointmentStatusesPOSTAsync(item);
-    }
+        protected override async Task<List<AppointmentStatusForView>> GetItemsFromService()
+        {
+            try
+            {
+                ICollection<AppointmentStatusForView> result = await _apiClient.AppointmentStatusesAllAsync(CancellationToken.None);
+                return result?.ToList() ?? new List<AppointmentStatusForView>();
+            }
+            catch (Exception ex) { Debug.WriteLine($"[AppStatusDS] GetItems Error: {ex.Message}"); return new List<AppointmentStatusForView>(); }
+        }
 
-    protected override async Task UpdateItemInService(AppointmentStatusForView item) 
-    {
-        await _apiClient.AppointmentStatusesPUTAsync(item.StatusId, item, System.Threading.CancellationToken.None);
-    }
+        protected override Task<AppointmentStatusForView> GetItemFromService(int id)
+        {
+            try
+            {
+                return _apiClient.AppointmentStatusesGETAsync(id, CancellationToken.None);
+            }
+            catch (ApiException ex) when (ex.StatusCode == 404) { return null; }
+            catch (Exception ex) { Debug.WriteLine($"[AppStatusDS] GetItem Error: {ex.Message}"); return null; }
+        }
 
-    protected override async Task DeleteItemFromService(int id)
-    {
-        await _apiClient.AppointmentStatusesDELETEAsync(id, System.Threading.CancellationToken.None);
-    }
+        protected override Task<AppointmentStatusForView> AddItemToService(AppointmentStatusForView item)
+        {
+            return _apiClient.AppointmentStatusesPOSTAsync(item, CancellationToken.None);
+        }
 
-    public override AppointmentStatusForView Find(int id)
-    {
-        
-        return items?.FirstOrDefault(s => s.StatusId == id);
-    }
+        protected override async Task UpdateItemInService(AppointmentStatusForView item)
+        {
+            await _apiClient.AppointmentStatusesPUTAsync(item.StatusId, item, CancellationToken.None);
+        }
 
-    private async Task<bool> CallApiAndReturnBool(Func<Task> apiCall)
-    {
-        try { await apiCall(); return true; }
-        catch (ApiException ex) when (ex.StatusCode == 404) { return false; }
-        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"API call failed: {ex.Message}"); return false; }
+        protected override async Task DeleteItemFromService(int id)
+        {
+            await _apiClient.AppointmentStatusesDELETEAsync(id, CancellationToken.None);
+        }
+
+        public override AppointmentStatusForView Find(int id)
+        {
+            return items?.FirstOrDefault(s => s.StatusId == id);
+        }
     }
 }

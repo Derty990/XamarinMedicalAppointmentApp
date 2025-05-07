@@ -23,8 +23,8 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
         // Ale często API POST zwraca utworzony obiekt (np. z ID), więc Task<T> jest też popularne.
         // Zostawmy Task<T> dla AddItemToService, bo często się to przydaje, a publiczna metoda obsłuży Task.
         protected abstract Task<T> AddItemToService(T item);
-        protected abstract Task UpdateItemInService(T item);    // PUT często zwraca 204 No Content (Task)
-        protected abstract Task DeleteItemFromService(int id);  // DELETE często zwraca 204 No Content (Task)
+        protected abstract Task UpdateItemInService(T item);    
+        protected abstract Task DeleteItemFromService(int id);  
 
         // Abstrakcyjna metoda Find do implementacji w klasie pochodnej (do szukania w 'items')
         public abstract T Find(int id);
@@ -68,13 +68,13 @@ namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
         public async Task UpdateItemAsync(T item)
         {
             await UpdateItemInService(item);
-            isInitialized = false; // Unieważnij cache
+            isInitialized = false; 
         }
 
         public async Task DeleteItemAsync(int id)
         {
             await DeleteItemFromService(id);
-            isInitialized = false; // Unieważnij cache
+            isInitialized = false; 
         }
     }
 }

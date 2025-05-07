@@ -18,13 +18,10 @@ namespace MedicalAppointmentApp.WebApi.ForView
         public string City { get; set; }
         public string PostalCode { get; set; }
 
-        // --- Operator Konwersji z Encji Clinic ---
-        // Wymaga ręcznego mapowania spłaszczonych pól adresu!
         public static implicit operator ClinicForView(Clinic clinic)
         {
             if (clinic == null) return null;
 
-            // Użyj CopyProperties do skopiowania pasujących pól (ClinicId, Name, AddressId)
             var forView = new ClinicForView().CopyProperties(clinic);
 
             // Ręcznie skopiuj dane z zagnieżdżonego adresu
@@ -38,10 +35,5 @@ namespace MedicalAppointmentApp.WebApi.ForView
 
             return forView;
         }
-
-        // Konwersja ClinicForView -> Clinic jest bardziej złożona,
-        // bo trzeba by stworzyć lub znaleźć obiekt Address.
-        // Zazwyczaj do tworzenia/aktualizacji Clinic używa się dedykowanego DTO
-        // lub mapuje ręcznie w kontrolerze, biorąc tylko Name i AddressId.
     }
 }

@@ -1,5 +1,4 @@
-﻿// W Xamarin - Services/SpecializationDataStore.cs
-using MedicalAppointmentApp.XamarinApp.Services.Abstract;
+﻿using MedicalAppointmentApp.XamarinApp.Services.Abstract;
 using MedicalAppointmentApp.XamarinApp.ApiClient; 
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ namespace MedicalAppointmentApp.XamarinApp.Services
   
     public class SpecializationDataStore : AListDataStore<SpecializationForView>, IDataStore<SpecializationForView>, ISpecializationService 
     {
-        private readonly MedicalApiClient _apiClient; // WYGENEROWANY Klient
+        private readonly MedicalApiClient _apiClient;
 
         public SpecializationDataStore()
         {

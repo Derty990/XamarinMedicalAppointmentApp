@@ -4,10 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MedicalAppointmentApp.WebApi.ForView
 {
-    // Proste DTO dla powiązania Lekarz-Klinika
     public class DoctorClinicForView
     {
-        [Key] // Klucz tabeli łączącej
+        [Key] 
         public int DoctorClinicId { get; set; }
 
         [Required]
@@ -16,11 +15,6 @@ namespace MedicalAppointmentApp.WebApi.ForView
         [Required]
         public int ClinicId { get; set; }
 
-        // Można by dodać spłaszczone DoctorName i ClinicName, jeśli potrzebne w jakimś widoku,
-        // ale wymagałoby to Include() i ręcznego mapowania w operatorze konwersji.
-        // Na razie zostawiamy tylko ID.
-
-        // --- Operatory Konwersji ---
         public static implicit operator DoctorClinicForView(DoctorClinic dc)
             => dc == null ? null : new DoctorClinicForView().CopyProperties(dc);
 

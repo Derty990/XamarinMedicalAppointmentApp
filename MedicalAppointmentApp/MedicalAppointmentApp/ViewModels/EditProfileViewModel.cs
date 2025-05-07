@@ -147,9 +147,6 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     Application.Current.Properties["LoggedInUserFirstName"] = userUpdateDto.FirstName;
                     Application.Current.Properties["LoggedInUserLastName"] = userUpdateDto.LastName;
                     Application.Current.Properties["LoggedInUserEmail"] = userUpdateDto.Email;
-                    // AddressId jest bardziej skomplikowane do zaktualizowania w Properties,
-                    // bo potrzebowalibyśmy pełnego obiektu adresu lub osobnego zapytania.
-                    // Na razie pominiemy aktualizację adresu w Properties.
                     await Application.Current.SavePropertiesAsync();
                 }
 

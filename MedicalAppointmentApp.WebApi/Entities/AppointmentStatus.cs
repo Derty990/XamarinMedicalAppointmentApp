@@ -13,9 +13,7 @@ namespace MedicalAppointmentApp.WebApi.Models
 
         [Required]
         [StringLength(50)]
-        public string StatusName { get; set; } // Np. 'Scheduled', 'Completed', 'Cancelled'
-
-        // Właściwość Nawigacyjna: Jeden status może być przypisany do wielu wizyt
+        public string StatusName { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

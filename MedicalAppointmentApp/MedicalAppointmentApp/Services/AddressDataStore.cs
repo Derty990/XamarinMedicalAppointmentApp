@@ -35,7 +35,7 @@ namespace MedicalAppointmentApp.XamarinApp.Services
             return _apiClient.AddressesGETAsync(id, CancellationToken.None);
         } 
 
-        protected override async Task DeleteItemFromService(int id) // Zmieniono Task<bool> na async Task
+        protected override async Task DeleteItemFromService(int id) 
         {
          
             await _apiClient.AddressesDELETEAsync(id, System.Threading.CancellationToken.None);
@@ -43,9 +43,9 @@ namespace MedicalAppointmentApp.XamarinApp.Services
         }
 
         protected override Task<AddressForView> AddItemToService(AddressForView item) => throw new NotImplementedException("Use CreateAddressAsync");
-        protected override async Task UpdateItemInService(AddressForView item) // Zwraca Task
+        protected override async Task UpdateItemInService(AddressForView item)
         {
-            var updateDto = new AddressCreateDto // Zakładamy istnienie takiego DTO
+            var updateDto = new AddressCreateDto 
             {
                 Street = item.Street,
                 City = item.City,
@@ -71,25 +71,25 @@ namespace MedicalAppointmentApp.XamarinApp.Services
             return items?.FirstOrDefault(a => a.AddressId == id);
         }
 
-        // Poprawiony helper z obsługą błędów
+      
         private async Task<bool> CallApiAndReturnBool(Func<Task> apiCall)
         {
             try
             {
                 await apiCall();
-                return true; // Sukces, jeśli nie było wyjątku (klient obsłużył 204)
+                return true; 
             }
-            catch (ApiException apiEx) when (apiEx.StatusCode == 404) // Specjalna obsługa 404 dla Delete/Update
+            catch (ApiException apiEx) when (apiEx.StatusCode == 404) 
             {
                 Debug.WriteLine($"[DataStore] API Info: Resource not found (404).");
-                return false; // Traktujemy jako niepowodzenie operacji
+                return false; 
             }
-            catch (ApiException apiEx) // Inne błędy API
+            catch (ApiException apiEx)
             {
                 Debug.WriteLine($"[DataStore] API Error: {apiEx.StatusCode} - {apiEx.Response}");
                 return false;
             }
-            catch (Exception ex) // Inne błędy
+            catch (Exception ex) 
             {
                 Debug.WriteLine($"[DataStore] General Error: {ex.Message}");
                 return false;

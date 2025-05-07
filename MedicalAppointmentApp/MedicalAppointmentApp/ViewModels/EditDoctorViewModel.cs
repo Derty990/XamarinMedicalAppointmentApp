@@ -17,7 +17,6 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
         private readonly IDoctorService _doctorService;
         private readonly ISpecializationService _specializationService;
 
-        // Właściwości tylko do odczytu dla wyświetlenia danych lekarza
         private int _doctorId;
         private string _firstName;
         public string FirstName { get => _firstName; private set => SetProperty(ref _firstName, value); }
@@ -34,11 +33,8 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
         {
             get => _selectedSpecializationIndex;
             set => SetProperty(ref _selectedSpecializationIndex, value);
-            // Nie potrzebujemy SelectedSpecialization jako obiektu, bo wysyłamy tylko ID
         }
-
-        // Komendy
-        public ICommand LoadDataCommand { get; } // Do ładowania lekarza i specjalizacji
+        public ICommand LoadDataCommand { get; }
         public ICommand SaveChangesCommand { get; }
         public ICommand DeleteDoctorCommand { get; }
 
@@ -81,7 +77,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     FirstName = doctor.FirstName;
                     LastName = doctor.LastName;
                     Email = doctor.Email; // Zakładając, że DoctorForView ma te pola
-                    Title = $"Edytuj: {FirstName} {LastName}"; // Zaktualizuj tytuł
+                    Title = $"Edytuj: {FirstName} {LastName}"; 
                 }
                 else
                 {
@@ -122,12 +118,9 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                 IsBusy = false;
             }
         }
-
         // Zapis zmian (tylko specjalizacji)
-
         async Task ExecuteSaveChangesCommand()
         {
-            // Walidacja - bez zmian
             if (SelectedSpecializationIndex < 0 || SelectedSpecializationIndex >= AvailableSpecializations.Count)
             {
                 await Application.Current.MainPage.DisplayAlert("Błąd", "Wybierz nową specjalizację.", "OK");
@@ -142,7 +135,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
 
             bool success = false; // Flaga sukcesu
 
-            try // Zewnętrzny try-finally dla IsBusy
+            try
             {
                 var selectedSpec = AvailableSpecializations[SelectedSpecializationIndex];
                 var updateDto = new DoctorUpdateDto
@@ -150,14 +143,13 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                     SpecializationId = selectedSpec.SpecializationId
                 };
 
-                try // Wewnętrzny try-catch dla API, głównie dla kodu 204
+                try 
                 {
                     await _doctorService.UpdateDoctorSpecializationAsync(_doctorId, updateDto);
-                    success = true; // Zakładamy sukces, jeśli nie było wyjątku (w tym 204)
+                    success = true; 
                 }
                 catch (ApiException apiEx) when (apiEx.StatusCode == 204)
                 {
-                    // Traktujemy 204 No Content jako sukces
                     Console.WriteLine($"API returned 204 No Content for Doctor PUT. Treating as success.");
                     success = true;
                 }

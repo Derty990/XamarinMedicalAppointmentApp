@@ -1,6 +1,6 @@
-﻿using MedicalAppointmentApp.Services.Abstract; // Dla ISpecializationService
-using MedicalAppointmentApp.Views;             // Dla nameof(AddEditSpecializationPage)
-using MedicalAppointmentApp.XamarinApp.ApiClient; // Dla SpecializationForView
+﻿using MedicalAppointmentApp.Services.Abstract;
+using MedicalAppointmentApp.Views;            
+using MedicalAppointmentApp.XamarinApp.ApiClient;
 using MedicalAppointmentApp.XamarinApp.Services.Abstract;
 using System;
 using System.Collections.ObjectModel;
@@ -18,14 +18,10 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
         private readonly ISpecializationService _specializationService;
 
         public ObservableCollection<SpecializationForView> Specializations { get; }
-
-        // Komendy
         public ICommand LoadSpecializationsCommand { get; }
         public ICommand AddSpecializationCommand { get; }
-        public ICommand EditSpecializationCommand { get; } // Wywoływana po wybraniu elementu
+        public ICommand EditSpecializationCommand { get; } 
         // Można dodać DeleteCommand później
-
-        // Wybrana specjalizacja
         private SpecializationForView _selectedSpecialization;
         public SpecializationForView SelectedSpecialization
         {
@@ -51,9 +47,6 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
             LoadSpecializationsCommand = new Command(async () => await ExecuteLoadSpecializationsCommand(), () => !IsBusy);
             AddSpecializationCommand = new Command(async () => await ExecuteAddSpecializationCommand(), () => !IsBusy);
             EditSpecializationCommand = new Command<SpecializationForView>(async (spec) => await ExecuteEditSpecializationCommand(spec), (spec) => !IsBusy && spec != null);
-
-            // Rozpocznij ładowanie danych
-            // LoadSpecializationsCommand.Execute(null); // Lepiej wywołać w OnAppearing strony
         }
 
         async Task ExecuteLoadSpecializationsCommand()
@@ -63,8 +56,7 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
             try
             {
                 Specializations.Clear();
-                // Używamy GetItemsAsync z IDataStore<SpecializationForView>
-                var items = await _specializationService.GetItemsAsync(true); // Wymuś odświeżenie
+                var items = await _specializationService.GetItemsAsync(true); 
                 if (items != null)
                 {
                     foreach (var item in items)
@@ -127,8 +119,6 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
                 SelectedSpecialization = null;
             }
         }
-
-
         // Metoda do wywołania z OnAppearing strony
         public void OnAppearing()
         {

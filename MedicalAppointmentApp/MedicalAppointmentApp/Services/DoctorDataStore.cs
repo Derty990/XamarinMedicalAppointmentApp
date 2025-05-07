@@ -55,8 +55,6 @@ public class DoctorDataStore : AListDataStore<DoctorForView>, IDoctorService
         throw new NotImplementedException("Use UpdateDoctorSpecializationAsync in IDoctorService instead.");
     }
 
-    // W pliku DoctorDataStore.cs
-
     public async Task<List<DoctorListItemDto>> GetDoctorListItemsAsync()
     {
         try
@@ -75,15 +73,6 @@ public class DoctorDataStore : AListDataStore<DoctorForView>, IDoctorService
             return new List<DoctorListItemDto>(); 
         }
     }
-
-    // --- UWAGA: Metody z AListDataStore<DoctorForView> poniżej nadal działają ---
-    // --- w kontekście pobierania/zarządzania PEŁNYM DoctorForView,      ---
-    // --- np. dla strony szczegółów/edycji, jeśli GetItemFromService działa poprawnie ---
-    // --- dla GET /api/doctors/{id} zwracającego DoctorForView.             ---
-
-    // protected override async Task<List<DoctorForView>> GetItemsFromService() { ... } // Ta metoda może być teraz nieużywana lub błędna
-    // protected override async Task<DoctorForView> GetItemFromService(int id) { ... } // Ta jest prawdopodobnie OK dla GetDoctor(id)
-    // ... reszta metod DataStore ...
 
     public Task<DoctorForView> CreateDoctorAsync(DoctorCreateDto createDto)
     {

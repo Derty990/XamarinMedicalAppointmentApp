@@ -12,13 +12,13 @@ namespace MedicalAppointmentApp.WebApi.Models
         public int AppointmentId { get; set; }
 
         [Required]
-        public int PatientId { get; set; } // Klucz obcy do Users (Pacjent)
+        public int PatientId { get; set; } 
 
         [Required]
-        public int DoctorId { get; set; } // Klucz obcy do Doctors
+        public int DoctorId { get; set; } 
 
         [Required]
-        public int ClinicId { get; set; } // Klucz obcy do Clinics
+        public int ClinicId { get; set; } 
 
         [Required]
         [Column(TypeName = "date")] // Mapowanie na typ DATE w SQL
@@ -26,21 +26,17 @@ namespace MedicalAppointmentApp.WebApi.Models
 
         [Required]
         [Column(TypeName = "time")] // Mapowanie na typ TIME w SQL
-        public TimeSpan StartTime { get; set; } // TimeSpan dobrze mapuje się na TIME
+        public TimeSpan StartTime { get; set; } 
 
         [Required]
         [Column(TypeName = "time")]
         public TimeSpan EndTime { get; set; }
 
         [Required]
-        public int StatusId { get; set; } // Klucz obcy do AppointmentStatuses
-
-       
-
-        // --- Właściwości Nawigacyjne ---
+        public int StatusId { get; set; } 
 
         [ForeignKey("PatientId")]
-        public virtual User Patient { get; set; } // Jawne nazwanie dla jasności
+        public virtual User Patient { get; set; } 
 
         [ForeignKey("DoctorId")]
         public virtual Doctor Doctor { get; set; }

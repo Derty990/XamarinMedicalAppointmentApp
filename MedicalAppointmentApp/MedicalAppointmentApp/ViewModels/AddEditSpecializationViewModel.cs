@@ -89,8 +89,8 @@ namespace MedicalAppointmentApp.XamarinApp.ViewModels
 
         async Task ExecuteSaveCommand()
         {
-            // Walidacja - bez zmian
-            if (!CanExecuteSaveCommand()) // Używamy CanExecute dla spójności
+            
+            if (!CanExecuteSaveCommand()) 
             {
                 await Application.Current.MainPage.DisplayAlert("Błąd", "Nazwa specjalizacji nie może być pusta.", "OK");
                 return;

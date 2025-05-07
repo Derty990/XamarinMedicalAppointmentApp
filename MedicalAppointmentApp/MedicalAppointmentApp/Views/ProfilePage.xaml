@@ -1,0 +1,44 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" x:Class="MedicalAppointmentApp.Views.ProfilePage"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edytuj" Command="{Binding EditProfileCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="10">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center"/>
+
+            <Frame Padding="15" CornerRadius="5" BorderColor="LightGray" Margin="0,0,0,10">
+                <StackLayout Spacing="8">
+                    <Label Text="Imię:" FontSize="Small" TextColor="Gray"/>
+                    <Label Text="{Binding UserProfile.FirstName}" FontSize="Medium" FontAttributes="Bold"/>
+
+                    <Label Text="Nazwisko:" FontSize="Small" TextColor="Gray" Margin="0,10,0,0"/>
+                    <Label Text="{Binding UserProfile.LastName}" FontSize="Medium" FontAttributes="Bold"/>
+
+                    <Label Text="Email:" FontSize="Small" TextColor="Gray" Margin="0,10,0,0"/>
+                    <Label Text="{Binding UserProfile.Email}" FontSize="Medium"/>
+                </StackLayout>
+            </Frame>
+
+            <Frame Padding="15" CornerRadius="5" BorderColor="LightGray">
+                <StackLayout Spacing="8">
+                    <Label Text="Adres:" FontSize="Medium" FontAttributes="Bold" Margin="0,0,0,5"/>
+
+                    <Label Text="Ulica:" FontSize="Small" TextColor="Gray"/>
+                    <Label Text="{Binding UserAddress.Street}" FontSize="Medium"/>
+                    <Label Text="Miasto:" FontSize="Small" TextColor="Gray" Margin="0,10,0,0"/>
+                    <Label Text="{Binding UserAddress.City}" FontSize="Medium"/>
+                    <Label Text="Kod pocztowy:" FontSize="Small" TextColor="Gray" Margin="0,10,0,0"/>
+                    <Label Text="{Binding UserAddress.PostalCode}" FontSize="Medium"/>
+                </StackLayout>
+            </Frame>
+
+            <Label Text="Ładowanie danych profilu..." IsVisible="{Binding IsBusy}" HorizontalOptions="Center" Margin="0,10,0,0"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

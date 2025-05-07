@@ -24,7 +24,6 @@ public class AppointmentStatusDataStore : AListDataStore<AppointmentStatusForVie
        
         return _apiClient.AppointmentStatusesGETAsync(id);
     }
-
    
     protected override Task<AppointmentStatusForView> AddItemToService(AppointmentStatusForView item)
     {
@@ -32,16 +31,14 @@ public class AppointmentStatusDataStore : AListDataStore<AppointmentStatusForVie
         return _apiClient.AppointmentStatusesPOSTAsync(item);
     }
 
-    protected override Task<bool> UpdateItemInService(AppointmentStatusForView item)
+    protected override async Task UpdateItemInService(AppointmentStatusForView item) 
     {
-       
-        return CallApiAndReturnBool(async () => await _apiClient.AppointmentStatusesPUTAsync(item.StatusId, item));
+        await _apiClient.AppointmentStatusesPUTAsync(item.StatusId, item, System.Threading.CancellationToken.None);
     }
 
-    protected override Task<bool> DeleteItemFromService(int id)
+    protected override async Task DeleteItemFromService(int id)
     {
-        
-        return CallApiAndReturnBool(async () => await _apiClient.AppointmentStatusesDELETEAsync(id));
+        await _apiClient.AppointmentStatusesDELETEAsync(id, System.Threading.CancellationToken.None);
     }
 
     public override AppointmentStatusForView Find(int id)

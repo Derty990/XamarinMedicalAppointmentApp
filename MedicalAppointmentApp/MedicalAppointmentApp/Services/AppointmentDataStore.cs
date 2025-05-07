@@ -10,7 +10,6 @@ using MedicalAppointmentApp.Services.Abstract;
 
 namespace MedicalAppointmentApp.XamarinApp.Services
 {
-   
     public class AppointmentDataStore : AListDataStore<AppointmentForView>, IAppointmentService
     {
         private readonly MedicalApiClient _apiClient;
@@ -20,9 +19,6 @@ namespace MedicalAppointmentApp.XamarinApp.Services
             _apiClient = DependencyService.Get<MedicalApiClient>();
             if (_apiClient == null) throw new InvalidOperationException($"{nameof(MedicalApiClient)} not registered.");
         }
-
-       
-
         protected override async Task<List<AppointmentForView>> GetItemsFromService()
         {
             try {
@@ -42,41 +38,32 @@ namespace MedicalAppointmentApp.XamarinApp.Services
             catch (ApiException ex) when (ex.StatusCode == 404) { return null; }
             catch (Exception ex) { Debug.WriteLine($"[AppointmentDataStore] GetItemFromService Error: {ex.Message}"); return null; }
         }
-
        
-        protected override Task<bool> DeleteItemFromService(int id)
+        protected override Task DeleteItemFromService(int id)
         {
           
             return CallApiAndReturnBool(async () => await _apiClient.AppointmentsDELETEAsync(id));
         }
-
       
         public override AppointmentForView Find(int id)
         {
             
             return items?.FirstOrDefault(a => a.AppointmentId == id);
         }
-
-       
         protected override Task<AppointmentForView> AddItemToService(AppointmentForView item) => throw new NotImplementedException("Use CreateAppointmentAsync instead.");
-        protected override Task<bool> UpdateItemInService(AppointmentForView item) => throw new NotImplementedException("Use UpdateAppointmentAsync instead.");
-
-      
+        protected override Task UpdateItemInService(AppointmentForView item) => throw new NotImplementedException("Use UpdateAppointmentAsync instead.");
         public Task<AppointmentForView> CreateAppointmentAsync(AppointmentCreateDto createDto)
         {
            
             return _apiClient.AppointmentsPOSTAsync(createDto);
           
         }
-
         public Task UpdateAppointmentAsync(int id, AppointmentUpdateDto updateDto)
         {
             
             return _apiClient.AppointmentsPUTAsync(id, updateDto);
            
         }
-
-       
         private async Task<bool> CallApiAndReturnBool(Func<Task> apiCall)
         {
             try { await apiCall(); return true; }

@@ -46,15 +46,15 @@ public class UserDataStore : AListDataStore<UserForView>, IUserService
     }
 
    
-    protected override async Task<bool> DeleteItemFromService(int id)
+    protected override async Task DeleteItemFromService(int id)
     {
         try
         {
           
             await _apiClient.UsersDELETEAsync(id);
-            return true;
+            
         }
-        catch (Exception ex) { Debug.WriteLine($"[UserDataStore] DeleteItemFromService Error: {ex.Message}"); return false; }
+        catch (Exception ex) { Debug.WriteLine($"[UserDataStore] DeleteItemFromService Error: {ex.Message}"); }
     }
 
    
@@ -66,7 +66,7 @@ public class UserDataStore : AListDataStore<UserForView>, IUserService
 
    
     protected override Task<UserForView> AddItemToService(UserForView item) => throw new NotImplementedException("Use RegisterUserAsync instead.");
-    protected override Task<bool> UpdateItemInService(UserForView item) => throw new NotImplementedException("Use UpdateUserAsync instead.");
+    protected override Task UpdateItemInService(UserForView item) => throw new NotImplementedException("Use UpdateUserAsync instead.");
 
 
   

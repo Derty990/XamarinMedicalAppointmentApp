@@ -26,6 +26,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Clinics
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ClinicForView>))]
         public async Task<ActionResult<IEnumerable<ClinicForView>>> GetClinics()
         {
             // Trzeba dołączyć Adres, aby operator konwersji zadziałał poprawnie dla spłaszczonych pól
@@ -38,6 +39,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Clinics/5
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ClinicForView))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ClinicForView>> GetClinic(int id)
         {
             // Trzeba dołączyć Adres
@@ -55,6 +58,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Clinics
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ClinicForView))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<ClinicForView>> PostClinic(ClinicCreateDto clinicCreateDto) 
         {
             // Sprawdź czy AddressId istnieje
@@ -93,6 +99,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // PUT: api/Clinics/5
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutClinic(int id, ClinicCreateDto clinicUpdateDto) // Używamy CreateDto
         {
             var clinicToUpdate = await _context.Clinics.FindAsync(id);
@@ -126,22 +135,24 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // DELETE: api/Clinics/5
         [HttpDelete("{id}")]
+         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteClinic(int id)
         {
             var clinic = await _context.Clinics.FindAsync(id);
             if (clinic == null) return NotFound();
 
-            _context.Clinics.Remove(clinic);
+            
+             bool isUsed = await _context.Appointments.AnyAsync(a => a.ClinicId == id) ||
+                           await _context.DoctorClinics.AnyAsync(dc => dc.ClinicId == id);
+             if (isUsed)
+             {
+                 return Conflict($"Cannot delete Clinic ID {id} because it is in use.");
+             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex) 
-            {
-                Console.WriteLine($"DbUpdateException deleting clinic {id}: {ex.InnerException?.Message ?? ex.Message}");
-                return Conflict($"Cannot delete Clinic ID {id} because it might be referenced by Doctors or Appointments.");
-            }
+            _context.Clinics.Remove(clinic);
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

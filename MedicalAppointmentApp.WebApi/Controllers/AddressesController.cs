@@ -26,6 +26,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Addresses
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<AddressForView>))]
         public async Task<ActionResult<IEnumerable<AddressForView>>> GetAddresses()
         {
             var addresses = await _context.Addresses.ToListAsync();
@@ -34,6 +35,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Addresses/5
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(AddressForView))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<AddressForView>> GetAddress(int id)
         {
             var address = await _context.Addresses.FindAsync(id);
@@ -44,6 +47,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // POST: api/Addresses
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AddressForView))] // Dodaj/Sprawdź
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<AddressForView>> PostAddress(AddressCreateDto addressCreateDto) // Przyjmuje CreateDto
         {
             var address = new Address(); // Tworzymy nową encję
@@ -67,6 +72,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // PUT: api/Addresses/5
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] 
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutAddress(int id, AddressCreateDto addressUpdateDto) // Przyjmuje CreateDto
         {
             var addressToUpdate = await _context.Addresses.FindAsync(id);
@@ -93,6 +101,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // DELETE: api/Addresses/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] // Dodaj/Sprawdź
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteAddress(int id)
         {
             var address = await _context.Addresses.FindAsync(id);

@@ -39,11 +39,10 @@ public class DoctorDataStore : AListDataStore<DoctorForView>, IDoctorService
         catch (ApiException ex) when (ex.StatusCode == 404) { return null; }
         catch (Exception ex) { Debug.WriteLine($"[DoctorDataStore] GetItemFromService Error: {ex.Message}"); return null; }
     }
-    protected override Task<bool> DeleteItemFromService(int id)
+    protected override async Task DeleteItemFromService(int id) 
     {
-        
-        return CallApiAndReturnBool(async () => await _apiClient.DoctorsDELETEAsync(id));
-    }  
+        await _apiClient.DoctorsDELETEAsync(id, System.Threading.CancellationToken.None);
+    }
     public override DoctorForView Find(int id)
     {
        
@@ -51,38 +50,29 @@ public class DoctorDataStore : AListDataStore<DoctorForView>, IDoctorService
     }
  
     protected override Task<DoctorForView> AddItemToService(DoctorForView item) => throw new NotImplementedException("Use CreateDoctorAsync instead.");
-    protected override Task<bool> UpdateItemInService(DoctorForView item) => throw new NotImplementedException("Use UpdateDoctorSpecializationAsync instead.");
+    protected override async Task UpdateItemInService(DoctorForView item) 
+    {
+        throw new NotImplementedException("Use UpdateDoctorSpecializationAsync in IDoctorService instead.");
+    }
 
     // W pliku DoctorDataStore.cs
 
     public async Task<List<DoctorListItemDto>> GetDoctorListItemsAsync()
     {
-        // Ta metoda powinna bezpośrednio wywołać endpoint API,
-        // który zwraca DoctorListItemDto (czyli GET /api/doctors)
-        // zamiast używać generycznego GetItemsAsync() dla DoctorForView.
-
         try
         {
-            // Wywołaj metodę klienta API, która odpowiada GET /api/doctors
-            // i zwraca kolekcję DoctorListItemDto.
-            // Zakładamy, że nazywa się DoctorsAllAsync() i zwraca odpowiedni typ
-            // (nawet jeśli GetItemsFromService próbowało rzutować inaczej).
-            // Sprawdź dokładną nazwę i typ zwracany w MedicalApiClient.cs!
-            ICollection<DoctorListItemDto> result = await _apiClient.DoctorsAllAsync(); // Zakładamy, że to zwraca ICollection<DoctorListItemDto>
-
-            // Zwróć listę lub pustą listę, jeśli wynik jest null
+            ICollection<DoctorListItemDto> result = await _apiClient.DoctorsAllAsync(); 
             return result?.ToList() ?? new List<DoctorListItemDto>();
         }
-        catch (ApiException apiEx) // Obsłuż błędy API specyficznie
+        catch (ApiException apiEx) 
         {
             Debug.WriteLine($"[DoctorDataStore] API Error getting doctor list items: {apiEx.StatusCode} - {apiEx.Response}");
-            // Możesz tu dodać logikę specyficzną dla błędów API
-            return new List<DoctorListItemDto>(); // Zwróć pustą listę w razie błędu API
+            return new List<DoctorListItemDto>();
         }
-        catch (Exception ex) // Obsłuż inne błędy
+        catch (Exception ex) 
         {
             Debug.WriteLine($"[DoctorDataStore] Error in GetDoctorListItemsAsync: {ex.Message}");
-            return new List<DoctorListItemDto>(); // Zwróć pustą listę w razie innego błędu
+            return new List<DoctorListItemDto>(); 
         }
     }
 

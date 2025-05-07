@@ -2,112 +2,79 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-namespace MedicalAppointmentApp.XamarinApp.Services.Abstract
+
+namespace MedicalAppointmentApp.XamarinApp.Services.Abstract 
 {
     public abstract class AListDataStore<T> : IDataStore<T> where T : class
     {
         protected List<T> items; 
-        protected bool isInitialized = false;
+        protected bool isInitialized = false; 
 
-        // Abstrakcyjne metody - komunikacja z API - implementowane w klasach dziedziczących
-        // Zwracają teraz bardziej użyteczne typy
-        protected abstract Task<T> AddItemToService(T item); // Zwraca dodany item (z ID) lub null
-        protected abstract Task<bool> UpdateItemInService(T item); // Zwraca true/false
-        protected abstract Task<bool> DeleteItemFromService(int id); // Zwraca true/false
-        protected abstract Task<List<T>> GetItemsFromService(); // Zwraca listę lub null/pustą listę
-        protected abstract Task<T> GetItemFromService(int id); // Zwraca item lub null
+        // Abstrakcyjne metody, które klasy pochodne muszą zaimplementować
+        // Te metody wykonują faktyczne wywołania API
+        protected abstract Task<List<T>> GetItemsFromService(); // API powinno zwrócić listę obiektów T
+        protected abstract Task<T> GetItemFromService(int id);    // API powinno zwrócić pojedynczy obiekt T
 
-       
+        // Dla operacji CUD, metody ...ToService mogą zwracać różne rzeczy (np. utworzony obiekt, bool, lub nic)
+        // ale publiczne metody interfejsu IDataStore<T> będą zwracać Task.
+        // Zmieńmy AddItemToService, aby zwracał Task, jeśli API POST nie zwraca utworzonego obiektu
+        // lub jeśli nie potrzebujemy go bezpośrednio w tym miejscu. Jeśli API zwraca T, można zostawić Task<T>.
+        // Dla spójności z IDataStore<T>.AddItemAsync(T item) -> Task, zrobimy Task.
+        // Ale często API POST zwraca utworzony obiekt (np. z ID), więc Task<T> jest też popularne.
+        // Zostawmy Task<T> dla AddItemToService, bo często się to przydaje, a publiczna metoda obsłuży Task.
+        protected abstract Task<T> AddItemToService(T item);
+        protected abstract Task UpdateItemInService(T item);    // PUT często zwraca 204 No Content (Task)
+        protected abstract Task DeleteItemFromService(int id);  // DELETE często zwraca 204 No Content (Task)
+
+        // Abstrakcyjna metoda Find do implementacji w klasie pochodnej (do szukania w 'items')
         public abstract T Find(int id);
-        // Można dodać więcej metod Find, jeśli potrzebne
 
-       
-        protected virtual async Task InitializeAsync()
+        // Wirtualna metoda inicjalizująca cache
+        protected virtual async Task InitializeListCacheAsync(bool forceRefresh = false)
         {
-            if (isInitialized)
+            if (!forceRefresh && isInitialized) // Pomiń, jeśli nie wymuszono i już zainicjalizowano
+            {
                 return;
+            }
 
-            items = await GetItemsFromService() ?? new List<T>(); // Pobierz z API
+            items = await GetItemsFromService() ?? new List<T>();
             isInitialized = true;
         }
 
-       
-        // BEZ BLOKÓW TRY-CATCH - wyjątki polecą do ViewModelu
+        // Implementacja metod z interfejsu IDataStore<T>
 
-        public async Task<bool> AddItemAsync(T item)
+        public async Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false)
         {
-            T addedItem = await AddItemToService(item); // Wywołanie metody z API
-            if (addedItem != null)
-            {
-                await InitializeAsync();
-                items?.Add(addedItem);
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> UpdateItemAsync(T item)
-        {
-            bool success = await UpdateItemInService(item);
-            if (success)
-            {
-              
-                isInitialized = false; 
-                await GetItemsAsync(true); // Wymuś odświeżenie przy następnym pobraniu listy
-            }
-            return success;
-        }
-
-        public virtual async Task<bool> DeleteItemAsync(int id)
-        {
-          
-           
-
-            bool success = await DeleteItemFromService(id); // Wywołanie metody z API
-            if (success)
-            {
-                // Odświeżamy cache
-                isInitialized = false;
-                await GetItemsAsync(true);
-            }
-            return success;
+            await InitializeListCacheAsync(forceRefresh);
+            return items ?? new List<T>();
         }
 
         public async Task<T> GetItemAsync(int id)
         {
-            await InitializeAsync();
-            T item = Find(id); 
-            if (item == null)
-            {
-               
-                item = await GetItemFromService(id);
-               
-            }
-            return item; 
+            // Dla uproszczenia zawsze pobieramy świeży obiekt z serwisu.
+            // Można by dodać logikę sprawdzania cache 'items' najpierw, jeśli potrzebne.
+            return await GetItemFromService(id);
         }
 
-        public async Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false)
+        public async Task AddItemAsync(T item)
         {
-            if (forceRefresh || !isInitialized)
-            {
-                await InitializeAsync(); // Wywołuje GetItemsFromService wewnątrz
-            }
-            return items ?? new List<T>();
+            // Wywołaj abstrakcyjną metodę serwisu.
+            // Jeśli AddItemToService zwróciłoby np. utworzony obiekt z ID, można by go tu użyć.
+            // Obecnie IDataStore.AddItemAsync zwraca Task, więc nie przejmujemy się wynikiem.
+            await AddItemToService(item);
+            isInitialized = false; // Unieważnij cache, aby następne GetItemsAsync pobrało świeżą listę
         }
 
-        Task IDataStore<T>.AddItemAsync(T item)
+        public async Task UpdateItemAsync(T item)
         {
-            return AddItemAsync(item);
+            await UpdateItemInService(item);
+            isInitialized = false; // Unieważnij cache
         }
 
-        Task IDataStore<T>.UpdateItemAsync(T item)
+        public async Task DeleteItemAsync(int id)
         {
-            return UpdateItemAsync(item);
-        }
-
-        Task IDataStore<T>.DeleteItemAsync(int id)
-        {
-            return DeleteItemAsync(id);
+            await DeleteItemFromService(id);
+            isInitialized = false; // Unieważnij cache
         }
     }
 }

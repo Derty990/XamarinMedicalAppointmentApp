@@ -44,17 +44,16 @@ namespace MedicalAppointmentApp.XamarinApp.Services
           
         }
 
-        protected override Task<bool> UpdateItemInService(SpecializationForView item)
+        protected override async Task UpdateItemInService(SpecializationForView item) 
         {
-          
-            return CallApiAndReturnBool(async () => await _apiClient.SpecializationsPUTAsync(item.SpecializationId, item));
+            
+            await _apiClient.SpecializationsPUTAsync(item.SpecializationId, item, System.Threading.CancellationToken.None); 
         }
 
-       
-        protected override Task<bool> DeleteItemFromService(int id)
+
+        protected override async Task DeleteItemFromService(int id) 
         {
-           
-            return CallApiAndReturnBool(async () => await _apiClient.SpecializationsDELETEAsync(id));
+            await _apiClient.SpecializationsDELETEAsync(id, System.Threading.CancellationToken.None);
         }
 
         public override SpecializationForView Find(int id)

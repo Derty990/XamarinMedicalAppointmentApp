@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MedicalAppointmentApp.WebApi.ForView
 {
-    public class AddressForView
+    public class AddressForView 
     {
         [Key] 
         public int AddressId { get; set; }

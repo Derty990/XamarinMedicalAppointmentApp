@@ -1,0 +1,48 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" x:Class="MedicalAppointmentApp.Views.AddEditAddressPage"
+             Title="{Binding Title}">
+
+    <StackLayout Padding="20" Spacing="15">
+
+        <Label Text="Ulica:" FontSize="Medium"/>
+        <Entry Text="{Binding Street, Mode=TwoWay}"
+               Placeholder="Wprowadź ulicę"
+               MaxLength="150"
+               IsEnabled="{Binding IsNotBusy}"/>
+
+        <Label Text="Miasto:" FontSize="Medium" Margin="0,10,0,0"/>
+        <Entry Text="{Binding City, Mode=TwoWay}"
+               Placeholder="Wprowadź miasto"
+               MaxLength="100"
+               IsEnabled="{Binding IsNotBusy}"/>
+
+        <Label Text="Kod pocztowy:" FontSize="Medium" Margin="0,10,0,0"/>
+        <Entry Text="{Binding PostalCode, Mode=TwoWay}"
+               Placeholder="Wprowadź kod pocztowy"
+               MaxLength="10"
+               IsEnabled="{Binding IsNotBusy}"/>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" Margin="0,10,0,0"/>
+
+        <Button Text="Zapisz"
+                Command="{Binding SaveCommand}"
+                BackgroundColor="#3498db"
+                TextColor="White"
+                CornerRadius="20"
+                HeightRequest="50"
+                Margin="0,20,0,0"
+                IsEnabled="{Binding IsNotBusy}"/>
+
+
+        <Button Text="Usuń Adres"
+                Command="{Binding DeleteCommand}"
+                BackgroundColor="Red"
+                TextColor="White"
+                CornerRadius="20"
+                HeightRequest="50"
+                Margin="0,10,0,0"
+                IsEnabled="{Binding IsNotBusy}"
+                IsVisible="{Binding IsEditMode}"/>
+
+    </StackLayout>
+</ContentPage>

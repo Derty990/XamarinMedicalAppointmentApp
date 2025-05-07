@@ -1,13 +1,22 @@
-﻿// Używane TYLKO jako parametr wejściowy dla PUT /api/users/{id}
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace MedicalAppointmentApp.WebApi.Dtos
 {
-    using System.ComponentModel.DataAnnotations;
     public class UserUpdateDto
     {
-        [Required] public string FirstName { get; set; }
-        [Required] public string LastName { get; set; }
-        [Required][EmailAddress] public string Email { get; set; }
-        [Required] public int RoleId { get; set; }
-        public int? AddressId { get; set; }
+        [Required(ErrorMessage = "Imię jest wymagane.")]
+        [StringLength(50)]
+        public string FirstName { get; set; }
+
+        [Required(ErrorMessage = "Nazwisko jest wymagane.")]
+        [StringLength(50)]
+        public string LastName { get; set; }
+
+        [Required(ErrorMessage = "Email jest wymagany.")]
+        [EmailAddress(ErrorMessage = "Niepoprawny format email.")]
+        [StringLength(100)]
+        public string Email { get; set; }
+
+        public int? AddressId { get; set; } 
     }
 }

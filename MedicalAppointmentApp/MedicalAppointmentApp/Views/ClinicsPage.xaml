@@ -1,0 +1,46 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels"
+             xmlns:model="clr-namespace:MedicalAppointmentApp.XamarinApp.ApiClient"
+             x:Class="MedicalAppointmentApp.Views.ClinicsPage"
+             Title="{Binding Title}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Dodaj" Command="{Binding AddClinicCommand}" />
+    </ContentPage.ToolbarItems>
+    <StackLayout>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
+        <CollectionView ItemsSource="{Binding Clinics}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedClinic, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding EditClinicCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:ClinicForView">
+                    <Grid Padding="10">
+                        <StackLayout>
+                            <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Medium"/>
+                            <Label FontSize="Small" TextColor="Gray">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding Street}"/>
+                                        <Span Text=", "/>
+                                        <Span Text="{Binding PostalCode}"/>
+                                        <Span Text=" "/>
+                                        <Span Text="{Binding City}"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </StackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Brak zdefiniowanych klinik." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                    <Button Text="Odśwież" Command="{Binding LoadClinicsCommand}" Margin="0,10,0,0"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+        <Button Text="Odśwież Listę" Command="{Binding LoadClinicsCommand}" Margin="10"/>
+    </StackLayout>
+</ContentPage>

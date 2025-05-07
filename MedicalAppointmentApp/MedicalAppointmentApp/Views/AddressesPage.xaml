@@ -1,0 +1,53 @@
+﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" xmlns:model="clr-namespace:MedicalAppointmentApp.XamarinApp.ApiClient" x:Class="MedicalAppointmentApp.Views.AddressesPage"
+             Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Dodaj" Command="{Binding AddAddressCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout>
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
+
+        <CollectionView ItemsSource="{Binding Addresses}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedAddress, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding EditAddressCommand}"
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:AddressForView">
+                    <Grid Padding="10" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackLayout Grid.Column="0">
+                            <Label Text="{Binding Street}" FontAttributes="Bold" FontSize="Medium"/>
+                            <Label FontSize="Small" TextColor="Gray">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding PostalCode}"/>
+                                        <Span Text=" "/>
+                                        <Span Text="{Binding City}"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </StackLayout>
+                        <Label Grid.Column="1" Text=">" FontSize="Medium" VerticalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Label Text="Brak zapisanych adresów." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                    <Button Text="Odśwież" Command="{Binding LoadAddressesCommand}" Margin="0,10,0,0"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <Button Text="Odśwież Listę" Command="{Binding LoadAddressesCommand}" Margin="10"/>
+
+    </StackLayout>
+</ContentPage>

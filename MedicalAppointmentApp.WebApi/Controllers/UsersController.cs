@@ -36,6 +36,8 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // GET: api/Users/5 - Zwraca jednego UserForView
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserForView))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UserForView>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -113,6 +115,9 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // PUT: api/Users/5 - Przyjmuje UserUpdateDto
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)] // Kluczowe dla poprawnego działania klienta
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutUser(int id, UserUpdateDto userUpdateDto)
         {
             var userToUpdate = await _context.Users.FindAsync(id);

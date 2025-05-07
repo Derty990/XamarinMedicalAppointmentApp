@@ -1,55 +1,69 @@
 ﻿using MedicalAppointmentApp.XamarinApp.Services.Abstract;
 using MedicalAppointmentApp.XamarinApp.ApiClient;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
-using MedicalAppointmentApp.Services.Abstract;
+using System.Diagnostics;
+using MedicalAppointmentApp.Services.Abstract; 
 
-
-public class ClinicDataStore : AListDataStore<ClinicForView>, IClinicService
+namespace MedicalAppointmentApp.XamarinApp.Services 
 {
-    private readonly MedicalApiClient _apiClient;
-    public ClinicDataStore() { _apiClient = DependencyService.Get<MedicalApiClient>(); if (_apiClient == null) throw new InvalidOperationException($"{nameof(MedicalApiClient)} not registered."); }
-
-    protected override async Task<List<ClinicForView>> GetItemsFromService()
+    public class ClinicDataStore : AListDataStore<ClinicForView>, IClinicService
     {
-       
-        ICollection<ClinicForView> result = await _apiClient.ClinicsAllAsync();
-        return result?.ToList() ?? new List<ClinicForView>();
+        private readonly MedicalApiClient _apiClient;
+
+        public ClinicDataStore()
+        {
+            _apiClient = DependencyService.Get<MedicalApiClient>();
+            if (_apiClient == null) throw new InvalidOperationException($"{nameof(MedicalApiClient)} not registered.");
+        }
+
+        protected override async Task<List<ClinicForView>> GetItemsFromService()
+        {
+            try
+            {
+                ICollection<ClinicForView> result = await _apiClient.ClinicsAllAsync(CancellationToken.None);
+                return result?.ToList() ?? new List<ClinicForView>();
+            }
+            catch (Exception ex) { Debug.WriteLine($"[ClinicDataStore] GetItems Error: {ex.Message}"); return new List<ClinicForView>(); }
+        }
+
+        protected override Task<ClinicForView> GetItemFromService(int id)
+        {
+            try
+            {
+                return _apiClient.ClinicsGETAsync(id, CancellationToken.None);
+            }
+            catch (ApiException ex) when (ex.StatusCode == 404) { return null; }
+            catch (Exception ex) { Debug.WriteLine($"[ClinicDataStore] GetItem Error: {ex.Message}"); return null; }
+        }
+        protected override Task<ClinicForView> AddItemToService(ClinicForView item) =>
+            throw new NotImplementedException("Use CreateClinicAsync with ClinicCreateDto instead.");
+
+        protected override Task UpdateItemInService(ClinicForView item) => 
+            throw new NotImplementedException("Use UpdateClinicAsync with ClinicCreateDto instead.");
+
+
+        protected override async Task DeleteItemFromService(int id) 
+        {
+            await _apiClient.ClinicsDELETEAsync(id, CancellationToken.None);
+        }
+        public Task<ClinicForView> CreateClinicAsync(ClinicCreateDto createDto)
+        {
+            return _apiClient.ClinicsPOSTAsync(createDto, CancellationToken.None);
+        }
+
+        public Task UpdateClinicAsync(int id, ClinicCreateDto updateDto)
+        {
+            return _apiClient.ClinicsPUTAsync(id, updateDto, CancellationToken.None);
+        }
+
+        public override ClinicForView Find(int id)
+        {
+            return items?.FirstOrDefault(c => c.ClinicId == id);
+        }
     }
-
-    protected override Task<ClinicForView> GetItemFromService(int id)
-    {
-       
-        return _apiClient.ClinicsGETAsync(id);
-    }
-
-    protected override Task<bool> DeleteItemFromService(int id)
-    {
-        return CallApiAndReturnBool(async () => await _apiClient.ClinicsDELETEAsync(id)); // SPRAWDŹ NAZWĘ!
-    }
-
-    public override ClinicForView Find(int id) => items?.FirstOrDefault(s => s.ClinicId == id); // Zakłada ClinicId
-
-    
-    protected override Task<ClinicForView> AddItemToService(ClinicForView item) => throw new NotImplementedException("Use CreateClinicAsync");
-    protected override Task<bool> UpdateItemInService(ClinicForView item) => throw new NotImplementedException("Use UpdateClinicAsync");
-
-
-    public Task<ClinicForView> CreateClinicAsync(ClinicCreateDto createDto) // Używa WYGENEROWANEGO ClinicCreateDto
-    {
-       
-        return _apiClient.ClinicsPOSTAsync(createDto);
-    }
-    public Task UpdateClinicAsync(int id, ClinicCreateDto updateDto) // Używa WYGENEROWANEGO ClinicCreateDto
-    {
-     
-        return _apiClient.ClinicsPUTAsync(id, updateDto);
-    }
-
-   
-    private async Task<bool> CallApiAndReturnBool(Func<Task> apiCall) { try { await apiCall(); return true; } catch (ApiException ex) when (ex.StatusCode == 404) { return false; } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"API call failed: {ex.Message}"); return false; } }
 }

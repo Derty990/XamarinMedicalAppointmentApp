@@ -101,7 +101,7 @@ namespace MedicalAppointmentApp.WebApi.Controllers
 
         // DELETE: api/Addresses/5
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)] // Dodaj/Sprawdź
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> DeleteAddress(int id)

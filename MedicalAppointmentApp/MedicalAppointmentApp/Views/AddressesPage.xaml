@@ -1,30 +1,63 @@
-﻿<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:MedicalAppointmentApp.XamarinApp.ViewModels" xmlns:model="clr-namespace:MedicalAppointmentApp.XamarinApp.ApiClient" x:Class="MedicalAppointmentApp.Views.AddressesPage"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             BackgroundColor="{StaticResource PageBackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Color x:Key="PageBackgroundColor">#f0f2f5</Color>
+            <Color x:Key="FrameBackgroundColor">White</Color>
+            <Color x:Key="PrimaryTextColor">#2c3e50</Color>
+            <Color x:Key="SecondaryTextColor">#7f8c8d</Color>
+            <Color x:Key="AccentColor">#3498db</Color>
+            <Color x:Key="FrameBorderColor">#e0e0e0</Color>
+
+            <Style x:Key="ListItemCardStyle" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}"/>
+                <Setter Property="CornerRadius" Value="8"/>
+                <Setter Property="Margin" Value="10,5"/>
+                <Setter Property="Padding" Value="15"/>
+                <Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}"/>
+                <Setter Property="HasShadow" Value="False"/>
+            </Style>
+
+            <Style x:Key="ActionButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="CornerRadius" Value="20" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="Padding" Value="20,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Dodaj" Command="{Binding AddAddressCommand}" />
+        <ToolbarItem Text="Dodaj" Command="{Binding AddAddressCommand}" Order="Primary" Priority="0"/>
     </ContentPage.ToolbarItems>
 
-    <StackLayout>
-        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#3498db" HorizontalOptions="Center" Margin="10"/>
+    <StackLayout Spacing="0">
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{StaticResource AccentColor}" HorizontalOptions="Center" Margin="0,10"/>
 
         <CollectionView ItemsSource="{Binding Addresses}"
                         SelectionMode="Single"
                         SelectedItem="{Binding SelectedAddress, Mode=TwoWay}"
                         SelectionChangedCommand="{Binding EditAddressCommand}"
-                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}">
+                        SelectionChangedCommandParameter="{Binding SelectedItem, Source={RelativeSource Self}}"
+                        BackgroundColor="Transparent"
+                        Margin="5,0">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10"/>
+            </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:AddressForView">
-                    <Grid Padding="10" ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackLayout Grid.Column="0">
-                            <Label Text="{Binding Street}" FontAttributes="Bold" FontSize="Medium"/>
-                            <Label FontSize="Small" TextColor="Gray">
+                    <Frame Style="{StaticResource ListItemCardStyle}">
+                        <StackLayout Spacing="4">
+                            <Label Text="{Binding Street}"
+                                   FontAttributes="Bold"
+                                   FontSize="Medium"
+                                   TextColor="{StaticResource PrimaryTextColor}"/>
+                            <Label FontSize="Small" TextColor="{StaticResource SecondaryTextColor}">
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span Text="{Binding PostalCode}"/>
@@ -34,20 +67,21 @@
                                 </Label.FormattedText>
                             </Label>
                         </StackLayout>
-                        <Label Grid.Column="1" Text=">" FontSize="Medium" VerticalOptions="Center"/>
-                    </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
             <CollectionView.EmptyView>
-                <StackLayout Padding="20" HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label Text="Brak zapisanych adresów." HorizontalTextAlignment="Center" TextColor="Gray"/>
-                    <Button Text="Odśwież" Command="{Binding LoadAddressesCommand}" Margin="0,10,0,0"/>
+                <StackLayout Padding="30" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Spacing="15">
+                    <Label Text="Brak zapisanych adresów."
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource SecondaryTextColor}"
+                           FontSize="Medium"/>
+                    <Button Text="Odśwież" Command="{Binding LoadAddressesCommand}" Style="{StaticResource ActionButtonStyle}"/>
                 </StackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
 
-        <Button Text="Odśwież Listę" Command="{Binding LoadAddressesCommand}" Margin="10"/>
-
+        <Button Text="Odśwież Listę" Command="{Binding LoadAddressesCommand}" Margin="10" Style="{StaticResource ActionButtonStyle}"/>
     </StackLayout>
 </ContentPage>
